@@ -131,7 +131,7 @@ Assume that the method name is `NAME`,
    - Add a line `'NAME': set_NAME_config,` to the dictionary `set_model_config_dict`, and import the function `set_NAME_config` here. 
    - Add a line `'NAME': forward_NAME,` to the dictionary `forward_dict`, and import the function `forward_NAME` here. 
    - Add a line `'NAME': NAME, ` to the dictionary `model_dict`, and import the model class `NAME` here. 
-   - Add a line `'NAME': NAME_dataset,` to the dictionary `dataset_class_dict`, and import the model class `NAME` here. 
+   - Add a line `'NAME': NAME_dataset,` to the dictionary `dataset_class_dict`, and import the dataset class `NAME_dataset` here. 
    - Add a line `'NAME': LOSS_FUNC,` to the dictionary `loss_func_dict`, where `LOSS_FUNC` is the loss function your model uses. 
 
 By the steps above, a new method can be added to the benchmark. 
