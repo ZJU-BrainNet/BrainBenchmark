@@ -126,6 +126,8 @@ Assume that the method name is `NAME`,
                              shuffle=shuffle)
    ```
 
+   If your model is so trivial that it just need raw data `x` and labels `y` as the input of the forward function, you can directly use the class `DefaultDataset` in the `default_dataset.py`. Thus there's no need to write your own dataset class!
+
 5. In the `BrainBenchmark/utils/meta_info.py`, 
 
    - Add a line `'NAME': set_NAME_config,` to the dictionary `set_model_config_dict`, and import the function `set_NAME_config` here. 
