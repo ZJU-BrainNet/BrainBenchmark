@@ -11,8 +11,14 @@ from sklearn.metrics import auc, precision_recall_curve
 
 
 class BinaryClassMetrics:
-    def __init__(self, pred, prob, true, ):
+    def __init__(self, args, pred, prob, true, ):
         pred, prob, true = pred.detach().numpy(), prob.detach().numpy(), true.detach().numpy()
+
+        if args.dataset == 'Clinical' and args.run_mode == 'test':
+            # remove label==2 in the Clinical inferring file
+            pred = pred[true != 2]
+            prob = prob[true != 2]
+            true = true[true != 2]
 
         if np.sum(true) == 0 and np.sum(pred) == 0:
             self.special_good = True
@@ -65,9 +71,10 @@ class BinaryClassMetrics:
 
 
 
-class MulticlassMetrics:
+class MultiClassMetrics:
     def __init__(self, basic_args, pred, prob, true, num_class, k=5,):
-        pred, prob, true = np.array(pred), np.array(prob), np.array(true)
+        pred, prob, true = pred.detach().numpy(), prob.detach().numpy(), true.detach().numpy()
+
         self.k = k
         self.acc = top_k_accuracy_score(true, prob, k=k, labels=np.arange(num_class))
 

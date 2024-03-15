@@ -21,7 +21,7 @@ class ChannelCNN(torch.nn.Module):
             x = self.cnn(x)                     # (bsz, final_dim, --)
             emb = torch.mean(x, dim=-1)   # (bsz, final_dim)
         else:
-            emb = torch.squeeze(x, 1) # (bsz, final_dim)
+            emb = torch.squeeze(x, 1) # (bsz, emb_dim)
         return emb
 
 
