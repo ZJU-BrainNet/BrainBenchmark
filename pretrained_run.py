@@ -63,9 +63,9 @@ if __name__ == '__main__':
                             help='The dataset to perform training.')
     group_data.add_argument('--sample_seq_num', type=float, default=None,
                             help='The number of sequence sampled from each dataset.')
-    group_data.add_argument('--seq_len', type=float, default=16,
+    group_data.add_argument('--seq_len', type=float, default=15,
                             help='The number of patches in a sequence.')
-    group_data.add_argument('--patch_len', type=float, default=128,
+    group_data.add_argument('--patch_len', type=float, default=100,
                             help='The number of points in a patch.')
     group_data.add_argument('--data_load_dir', type=str, default='/data/brainnet/benchmark/gene_data/',
                             help='The path to load the generated data.')
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                             help='Number of processes to call to load the dataset.')
 
     group_arch = parser.add_argument_group('Architecture')
-    group_arch.add_argument('--random_seed', type=int, default=1572674900,
+    group_arch.add_argument('--random_seed', type=int, default=1570751838,
                             help="Set a specific random seed.")
     group_arch.add_argument('--model', type=str, default='BrainBERT',   # BrainBERT
                             help='The model to run.')
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         best_model_state = state_dict["BestModel"]
         best_clsf_state  = state_dict["BestClsf"]
         optimizer.load_state_dict(state_dict["Optimizer"])
-        print(f'Checkpoint loaded: best_vl_loss = {best_vl_loss:.4f} Now continue the unsupervised training.')
+        print(f'Checkpoint loaded: best_vl_loss = {best_vl_loss:.4f}, now continue the unsupervised training.')
     else:
         print('Not load checkpoints, begin finetuning from pretrained weights.')
         best_model_state = deepcopy(model.state_dict())
@@ -175,6 +175,10 @@ if __name__ == '__main__':
         # create if not exist
         if not os.path.exists(args.save_ckpt_path):
             os.makedirs(args.save_ckpt_path)
+        elif args.run_mode == 'finetune':
+            shutil.rmtree(args.path_checkpoint)
+            os.mkdir(args.path_checkpoint)
+            print(f'To begin the finetuning, have deleted the existing save_ckpt_path in {args.save_ckpt_path}')
 
     print('-' * 50)
 

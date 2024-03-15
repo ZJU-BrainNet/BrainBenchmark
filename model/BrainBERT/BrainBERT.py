@@ -22,7 +22,7 @@ class BrainBERT_Trainer:
 
     @staticmethod
     def clsf_loss_func(args):
-        return nn.CrossEntropyLoss(torch.tensor([0.4, 1], dtype=torch.float32, device=torch.device(args.gpu_id)))
+        return nn.CrossEntropyLoss(torch.tensor([0.1, 1], dtype=torch.float32, device=torch.device(args.gpu_id)))
 
     @staticmethod
     def optimizer(args, model, clsf):

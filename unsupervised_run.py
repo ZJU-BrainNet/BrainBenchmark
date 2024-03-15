@@ -159,7 +159,7 @@ if __name__ == '__main__':
             best_model_state = state_dict["BestModel"]
             best_clsf_state  = state_dict["BestClsf"]
             optimizer.load_state_dict(state_dict["Optimizer"])
-            print(f'Checkpoint loaded: best_vl_loss = {best_vl_loss:.4f} Now continue the unsupervised training.')
+            print(f'Checkpoint loaded: best_vl_loss = {best_vl_loss:.4f}, now continue the unsupervised training.')
     else:
         print('Not load checkpoint')
         best_model_state = deepcopy(model.state_dict())
@@ -179,6 +179,10 @@ if __name__ == '__main__':
         # create if not exist
         if not os.path.exists(args.save_ckpt_path):
             os.makedirs(args.save_ckpt_path)
+        elif args.run_mode == 'finetune':
+            shutil.rmtree(args.path_checkpoint)
+            os.mkdir(args.path_checkpoint)
+            print(f'To begin the finetuning, have deleted the existing save_ckpt_path in {args.save_ckpt_path}')
 
     print('-' * 50)
 
