@@ -49,7 +49,7 @@ def show_logs(prefix, logs, time_info):
     out = prefix + '  '
     for key in logs:
         out += f"{key}:{logs[key]:8.4f}  "
-    out += time_info if time_info is not None else ''
+    out += f'({time_info})' if time_info is not None else ''
     print(out)
 
 

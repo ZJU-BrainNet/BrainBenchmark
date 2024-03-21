@@ -44,6 +44,8 @@ class BinaryClassMetrics:
         precision, recall, thresholds = precision_recall_curve(true, prob[:, 1])
         self.auc = auc(recall, precision)
 
+        self.conf_matrix = self.get_confusion()
+
     def get_confusion(self):
         return f"TP={self.tp}, TN={self.tn}, FP={self.fp}, FN={self.fn} " if not self.special_good else "special_good"
 

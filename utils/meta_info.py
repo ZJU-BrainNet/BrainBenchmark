@@ -6,10 +6,8 @@ from data_process.defult_group_gene import default_group_data_gene
 from data_process.get_data import default_get_data, clinical_get_data
 from datasets.TFC_dataset import TFC_Dataset
 from datasets.default_dataset import DefaultDataset
-# from model.BrainBERT.BrainBERT import set_BrainBERT_config, load_pretrained_weights_BrainBERT, BrainBERT, \
-    # forward_BrainBERT, adapt_to_input_size_BrainBERT, clsf_loss_func_BrainBERT
-# from model.TFC.TFC import forward_TFC, TFC, set_TFC_config
 from model.BrainBERT.BrainBERT import BrainBERT_Trainer, BrainBERT
+from model.GPT4TS.GPT4TS import GPT4TS_Trainer, GPT4TS
 from model.TFC.TFC import TFC_Trainer, TFC
 from utils.metrics import BinaryClassMetrics, MultiClassMetrics
 
@@ -52,16 +50,19 @@ metrics_dict = {
 dataset_class_dict = {
     'TFC': TFC_Dataset,
     'BrainBERT': DefaultDataset,
+    'GPT4TS': DefaultDataset,
 }
 
 trainer_dict = {
     'TFC': TFC_Trainer,
     'BrainBERT': BrainBERT_Trainer,
+    'GPT4TS': GPT4TS_Trainer,
 }
 
 model_dict = {
     'TFC': TFC,
     'BrainBERT': BrainBERT,
+    'GPT4TS': GPT4TS,
 }
 
 # loss_func_dict = {

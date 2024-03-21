@@ -4,6 +4,7 @@ import torch
 from tqdm import tqdm
 
 # from model.BrainBERT.BrainBERT import forward_propagate
+# from model.BrainBERT.BrainBERT import forward_propagate_BrainBERT
 from utils.meta_info import dataset_class_dict, metrics_dict
 from utils.misc import update_logs, show_logs
 
@@ -65,6 +66,9 @@ def train_epoch(args, tr_x_list, tr_y_list, model, clsf, loss_func, optimizer, )
 
     epo_loss /= batch_cnt
     epo_logs = update_logs(args, epo_logs, epo_loss, metrics)
+
     show_logs('[Train]', epo_logs, f"{(time.perf_counter()-start_time):.1f}s")
+    if args.run_mode == 'finetune':
+        print(metrics.conf_matrix)
 
     return epo_logs, epo_loss

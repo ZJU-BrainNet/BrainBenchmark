@@ -5,24 +5,23 @@ from argparse import Namespace
 
 from data_process.data_info import data_info_dict
 from model.BrainBERT.models.masked_tf_model import MaskedTFModel
-from model.BrainBERT.pre_cnn import ConvNet
+from model.pre_cnn import ConvNet
 
 
 class BrainBERT_Trainer:
     def __init__(self, args: Namespace):
-        super(BrainBERT_Trainer, self).__init__()
+        return
 
     @staticmethod
-    def set_config(parser):
-        group_model = parser.add_argument_group('Model')
-        group_model.add_argument('--final_dim', type=int, default=768,
-                                 help="The dim of final representations.")
-        args = parser.parse_args()
+    def set_config(args: Namespace):
+        args.final_dim = 768
         return args
 
     @staticmethod
     def clsf_loss_func(args):
-        return nn.CrossEntropyLoss(torch.tensor([0.1, 1], dtype=torch.float32, device=torch.device(args.gpu_id)))
+        ce_weight = [0.1, 1]
+        print(f'CrossEntropy loss weight = {ce_weight} = {ce_weight[1]/ce_weight[0]:.2f}')
+        return nn.CrossEntropyLoss(torch.tensor(ce_weight, dtype=torch.float32, device=torch.device(args.gpu_id)))
 
     @staticmethod
     def optimizer(args, model, clsf):
@@ -81,7 +80,27 @@ class BrainBERT_Trainer:
 #     return new_x_list
 
 
-
+# def forward_propagate_BrainBERT(args, data_packet, model, clsf, loss_func=None):
+#     x, y = data_packet
+#     bsz, ch_num, seq_len, patch_len = x.shape
+#
+#     emb = model(x)
+#
+#     if data_info_dict[args.dataset]['label_level'] == 'channel_level':
+#         # y: (bsz, ch_num)
+#         y = y.reshape(-1)
+#         emb = emb.reshape(bsz * ch_num, 1, -1)  # (bsz*ch_num, fake_ch_num=1, emb_dim) to clsf
+#     else:
+#         # y: (bsz, )
+#         emb = emb.reshape(bsz, ch_num, -1)
+#
+#     logit = clsf(emb)  # use the unified clsf
+#
+#     if args.run_mode != 'test':
+#         loss = loss_func(logit, y)
+#         return loss, logit, y
+#     else:
+#         return logit, y
 
 
 
@@ -141,7 +160,8 @@ class BrainBERT(nn.Module):
             model.load_state_dict(init_state['model'])
             return model
 
-        cfg = OmegaConf.create({"upstream_ckpt": '/data/yzz/Brant-2/baseline_ckpt/BrainBERT/stft_large_pretrained.pth'})
+        # cfg = OmegaConf.create({"upstream_ckpt": '/data/yzz/Brant-2/baseline_ckpt/BrainBERT/stft_large_pretrained.pth'})
+        cfg = OmegaConf.create({"upstream_ckpt": '/data/brainnet/benchmark/pretrained_weights/BrainBERT/stft_large_pretrained.pth'})
         model = _build_model(cfg, args.gpu_id).to(args.gpu_id)
         return model
 

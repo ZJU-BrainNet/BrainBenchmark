@@ -89,3 +89,8 @@ def clinical_get_data(args, step):
 
     return group_x_list, group_y_list
 
+
+if __name__ == '__main__':
+    indices = list(range(1, 5))  # g1, g2, g3, g4
+    shift = 1
+    indices = indices[-shift:] + indices[:-shift]

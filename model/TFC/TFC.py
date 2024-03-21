@@ -10,23 +10,29 @@ from model.TFC.loss import NTXentLoss_poly
 
 class TFC_Trainer:
     def __init__(self, args: Namespace):
-        super(TFC_Trainer, self).__init__()
+        return
 
     @staticmethod
-    def set_config(parser):
-        group_model = parser.add_argument_group('Model')
-        group_model.add_argument('--Context_Cont_temperature', type=float, default=0.2)
-        group_model.add_argument('--Context_Cont_use_cosine_similarity', action='store_false')
-        group_model.add_argument('--augmentation_max_seg', type=int, default=12)
-        group_model.add_argument('--augmentation_jitter_ratio', type=float, default=2)
-        group_model.add_argument('--augmentation_jitter_scale_ratio', type=float, default=1.5)
-        args = parser.parse_args()
+    def set_config(args: Namespace):
+        args.Context_Cont_temperature = 0.2
+        args.Context_Cont_use_cosine_similarity = True
+        args.augmentation_max_seg = 12
+        args.augmentation_jitter_ratio = 2
+        args.augmentation_jitter_scale_ratio = 1.5
         return args
 
     @staticmethod
     def clsf_loss_func(args):
         return nn.CrossEntropyLoss()
 
+    @staticmethod
+    def optimizer(args, model, clsf):
+        return torch.optim.AdamW([
+            {'params': list(model.parameters()), 'lr': args.lr},
+            {'params': list(clsf.parameters()), 'lr': args.lr},
+        ],
+            betas=(0.9, 0.95), eps=1e-5,
+        )
 
 
 class TFC(nn.Module):

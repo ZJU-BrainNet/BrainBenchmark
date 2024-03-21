@@ -136,7 +136,7 @@ def unsampled_group_data_gene(args):
                 x = np.swapaxes(x, axis1=0, axis2=1)    # (seq_num, ch_num, 1500)
                 y = np.swapaxes(y, axis1=0, axis2=1)    # (seq_num, ch_num, 1500)
 
-                y = np.max(y, axis=(2))
+                y = np.max(y, axis=2)
 
                 x, y = sample_and_unify_length(args, args.sample_seq_num, x, y,)
 

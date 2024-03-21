@@ -72,5 +72,7 @@ def evaluate_epoch(args, x_list, y_list, model, clsf, loss_func, step):
 
     if step == 'valid':
         show_logs('[Valid]', epo_logs, f"{(time.perf_counter()-start_time):.1f}s")
+        if args.run_mode == 'finetune':
+            print(metrics.conf_matrix)
 
     return epo_logs, epo_loss

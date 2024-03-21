@@ -25,13 +25,13 @@ if __name__ == '__main__':
     group_train = parser.add_argument_group('Train')
     group_train.add_argument('--exp_id', type=str, default='-1',
                              help='The experimental id.')
-    group_train.add_argument('--gpu_id', type=int, default=1,
+    group_train.add_argument('--gpu_id', type=int, default=7,
                              help='The gpu id.')
-    group_train.add_argument('--cv_id', type=int, default=0,
+    group_train.add_argument('--cv_id', type=int, default=1,
                              help='The cross validation id.')
     group_train.add_argument('--run_mode', type=str, default='test',   # unsupervised, finetune, test
                              help='To perform self-/unsupervised training, finetuning, or testing.')
-    group_train.add_argument('--batch_size', type=int, default=128,
+    group_train.add_argument('--batch_size', type=int, default=4,
                              help='Number of batches.')
     group_train.add_argument('--save_epochs', type=int, default=3,
                              help='The epoch number to save checkpoint.')
@@ -55,17 +55,17 @@ if __name__ == '__main__':
                              help='Whether to use tqdm_dis')
 
     group_data = parser.add_argument_group('Data')
-    group_data.add_argument('--dataset', type=str, default='FNUSA',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx
+    group_data.add_argument('--dataset', type=str, default='Clinical',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx
                             help='The dataset to perform training.')
-    group_data.add_argument('--sample_seq_num', type=float, default=None,
+    group_data.add_argument('--sample_seq_num', type=int, default=None,
                             help='The number of sequence sampled from each dataset.')
-    group_data.add_argument('--seq_len', type=float, default=15,
+    group_data.add_argument('--seq_len', type=int, default=15,
                             help='The number of patches in a sequence.')
-    group_data.add_argument('--patch_len', type=float, default=100,
+    group_data.add_argument('--patch_len', type=int, default=100,
                             help='The number of points in a patch.')
     group_data.add_argument('--data_load_dir', type=str, default='/data/brainnet/benchmark/gene_data/',
                             help='The path to load the generated data.')
-    group_data.add_argument('--n_process_loader', type=int, default=10,
+    group_data.add_argument('--n_process_loader', type=int, default=5,
                             help='Number of processes to call to load the dataset.')
 
     group_arch = parser.add_argument_group('Architecture')
@@ -77,7 +77,7 @@ if __name__ == '__main__':
                             help="The number of input channels of the dataset.")
     group_arch.add_argument('--cnn_kernel_size', type=int, default=8,
                             help="The kernel size of the CNN to aggregate the channels.")
-    group_arch.add_argument('--final_dim', type=int, default=512,
+    group_arch.add_argument('--final_dim', type=int, default=768,
                             help="The dim of final representations.")
 
     argv = sys.argv[1:]
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     trainer = trainer_dict[args.model](args)
 
-    args = trainer.set_config(parser)
+    args = trainer.set_config(args)
     args.data_id = '{}_ssn{}_sl{}_pl{}'.format(
         args.dataset,
         args.sample_seq_num,
@@ -114,13 +114,7 @@ if __name__ == '__main__':
     clsf  = ChannelAggrClsf(args).to(device)
 
     loss_func = trainer.clsf_loss_func(args)
-
-    optimizer = torch.optim.AdamW([
-         {'params': list(model.parameters()), 'lr': args.lr},
-         {'params': list(clsf .parameters()), 'lr': args.lr},
-         ],
-        betas=(0.9, 0.95), eps=1e-5,
-    )
+    optimizer = trainer.optimizer(args, model, clsf)
 
 
     best_vl_loss = np.inf
@@ -180,8 +174,8 @@ if __name__ == '__main__':
         if not os.path.exists(args.save_ckpt_path):
             os.makedirs(args.save_ckpt_path)
         elif args.run_mode == 'finetune':
-            shutil.rmtree(args.path_checkpoint)
-            os.mkdir(args.path_checkpoint)
+            shutil.rmtree(args.save_ckpt_path)
+            os.mkdir(args.save_ckpt_path)
             print(f'To begin the finetuning, have deleted the existing save_ckpt_path in {args.save_ckpt_path}')
 
     print('-' * 50)
