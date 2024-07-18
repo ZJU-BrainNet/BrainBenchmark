@@ -17,7 +17,9 @@ tqdm==4.64.1
 
 ## Data Generating 
 
+For each dataset you want to run experiments on, the first thing to do is generating a specific set of data on your device. Just run the `data_gene.py`, passing in the specific argument value: `dataset`, `sample_seq_num`, `seq_len`, and  `patch_len`.
 
+These four arguments can determine one specific set of data. 
 
 ## Training and Evaluation
 
@@ -57,9 +59,34 @@ To perform the self-supervised or unsupervised training, please run the `unsuper
 
 ## To add a new dataset
 
+1. Split all the subjects in the new dataset into several groups (4-6 groups are recommended). Each group of data should be generated as a signle file named like `group_0_data.npy`, ..., `group_5_data.npy`. In each file, the shape of the numpy array is: `(seq_num, ch_num, seq_len, patch_len)` 
 
+   The cooresponding label files should be named in similar format: `group_0_label.npy`, ..., `group_5_label.npy`. 
 
+2. Then, add a new element in the `data_info_dict` from  `BrainBenchmark/data_process/data_info.py`. Taking MAYO as an example: 
 
+   ```python
+   'MAYO': {'data_path': '/data/brainnet/public_dataset/MAYO/group_data_15000_2to0/',
+       'group_num': 6,
+       'split': [3, 1, 2],
+       'various_ch_num': False,
+       'n_class': 2,
+       'label_level': 'subject_level',
+       },
+   ```
+
+   - `split`: how to split the 6 groups, as training/validation/testing respectively.
+   - `various_ch_num`: whether or not the channel number may varies between different data files in this dataset.
+   - `n_class`: the task performed on this dataset is a n-class classification task.
+   - `label_level`: the labels are subject-level or channel-level. 
+
+3. For most of datasets, the label are subject-level without any variations in channel number. In this case, you can usually use the `default_group_data_gene()` function in the `BrainBenchmark/data_process/default_group_gene.py`. For other special cases like our clinical datasets, please refer to `clinical_group_gene.py` for reference. 
+
+4. In the `BrainBenchmark/utils/meta_info.py`, assume the new dataset name is `NAME`, 
+
+   - Add a line `'NAME': <group_data_gene>,` to the dictionary `group_data_gene_dict`, and import the function `<group_data_gene>` here. 
+   - Add a line `'NAME': default_get_data,` to the dictionary `get_data_dict`. 
+   - Add a line `'NAME': BinaryClassMetrics, ` (if `n_class==2`) or `'NAME': MultiClassMetrics, ` (if `n_class>=3`)  to the dictionary `metrics_dict`. 
 
 ## To add a new method
 
