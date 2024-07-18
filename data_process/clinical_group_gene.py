@@ -30,30 +30,19 @@ clinical_group_dict = {
 #     12: [clinical_group_dict['g1'] + clinical_group_dict['g2'], clinical_group_dict['g3'], clinical_group_dict['g4']],
 # }
 
-# file_dict = {
-#     '01TGX': 't01_14ki',
-#     '02GJX': 't02_127w',
-#     '03ZXY': 't03_1461',
-#     '05ZLH': 't05_10ap',
-#     '06ZYJ': 't06_11mb',
-#     '07WF' : 't07_123z',
-#     '08CXF': 't08_1295',
-#     '09WYT': 't09_16j3',
-# }
-
-file_dict = {
-    '01TGX': 'FA0014KI',
-    '02GJX': 'FA00127W',
-    '03ZXY': 'FA001461',
-    '05ZLH': 'FA0010AP',
-    '06ZYJ': 'FA0011MB',
-    '07WF' : 'FA00123Z',
-    '08CXF': 'FA001295',
-    '09WYT': 'FA0016J3',
-}
 
 
 def sampled_group_data_gene(args):
+    file_dict = {
+        '01TGX': 't01_14ki',
+        '02GJX': 't02_127w',
+        '03ZXY': 't03_1461',
+        '05ZLH': 't05_10ap',
+        '06ZYJ': 't06_11mb',
+        '07WF' : 't07_123z',
+        '08CXF': 't08_1295',
+        '09WYT': 't09_16j3',
+    }
     data_path = data_info_dict[args.dataset]['sampled_data_path']
 
     for group in clinical_group_dict.keys():
@@ -64,9 +53,16 @@ def sampled_group_data_gene(args):
             # x: (ch_num, broad_num, 15, 1500)
             # y: (ch_num, broad_num, 15)
             ch_num, broad_num, _, _ = x.shape
-            x = x.reshape(ch_num, broad_num*15, 1500)
-            y = y.reshape(ch_num, broad_num*15)
-            x = np.swapaxes(x, axis1=0, axis2=1)    # (seq_num, ch_num, 1500)
+
+            if args.seq_len == 15 and args.patch_len == 100:
+                x = np.reshape(x, (ch_num, broad_num*15, 15*100))
+                y = np.reshape(y, (ch_num, broad_num*15))
+
+            elif args.seq_len == 15 and args.patch_len == 1500:
+                x = np.reshape(x, (ch_num, broad_num, 15*1500))  # x: (ch_num, broad_num, 15*1500)
+                y = np.mean(y, axis=-1)                                   # y: (ch_num, broad_num,)
+
+            x = np.swapaxes(x, axis1=0, axis2=1)    # (seq_num, ch_num, seq_len)
             y = np.swapaxes(y, axis1=0, axis2=1)    # (seq_num, ch_num,)
 
             x, y = sample_and_unify_length(args, args.sample_seq_num, x, y,)
@@ -82,6 +78,16 @@ def sampled_group_data_gene(args):
 
 
 def unsampled_group_data_gene(args):
+    file_dict = {
+        '01TGX': 'FA0014KI',
+        '02GJX': 'FA00127W',
+        '03ZXY': 'FA001461',
+        '05ZLH': 'FA0010AP',
+        '06ZYJ': 'FA0011MB',
+        '07WF': 'FA00123Z',
+        '08CXF': 'FA001295',
+        '09WYT': 'FA0016J3',
+    }
     def remove_suffix(input_string, suffixes=('_data.npy', '_label.npy')):
         for suffix in suffixes:
             if input_string.endswith(suffix):
@@ -129,12 +135,13 @@ def unsampled_group_data_gene(args):
                 # x: (ch_num, tot_len)
                 # y: (ch_num, tot_len)
                 ch_num, tot_len = x.shape
-                x = x[:, : tot_len // 1500 * 1500]
-                y = y[:, : tot_len // 1500 * 1500]
-                x = x.reshape(ch_num, -1, 1500)
-                y = y.reshape(ch_num, -1, 1500)
-                x = np.swapaxes(x, axis1=0, axis2=1)    # (seq_num, ch_num, 1500)
-                y = np.swapaxes(y, axis1=0, axis2=1)    # (seq_num, ch_num, 1500)
+                target_len = args.seq_len * args.patch_len
+                x = x[:, : tot_len // target_len * target_len]
+                y = y[:, : tot_len // target_len * target_len]
+                x = x.reshape(ch_num, -1, target_len)
+                y = y.reshape(ch_num, -1, target_len)
+                x = np.swapaxes(x, axis1=0, axis2=1)    # (seq_num, ch_num, args.seq_len * args.patch_len)
+                y = np.swapaxes(y, axis1=0, axis2=1)    # (seq_num, ch_num, args.seq_len * args.patch_len)
 
                 y = np.max(y, axis=2)
 

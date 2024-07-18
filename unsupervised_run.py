@@ -25,17 +25,17 @@ if __name__ == '__main__':
     group_train = parser.add_argument_group('Train')
     group_train.add_argument('--exp_id', type=str, default='-1',
                              help='The experimental id.')
-    group_train.add_argument('--gpu_id', type=int, default=7,
+    group_train.add_argument('--gpu_id', type=int, default=1,
                              help='The gpu id.')
-    group_train.add_argument('--cv_id', type=int, default=1,
+    group_train.add_argument('--cv_id', type=int, default=2,
                              help='The cross validation id.')
     group_train.add_argument('--run_mode', type=str, default='test',   # unsupervised, finetune, test
                              help='To perform self-/unsupervised training, finetuning, or testing.')
-    group_train.add_argument('--batch_size', type=int, default=4,
+    group_train.add_argument('--batch_size', type=int, default=512,
                              help='Number of batches.')
     group_train.add_argument('--save_epochs', type=int, default=3,
                              help='The epoch number to save checkpoint.')
-    group_train.add_argument('--epoch_num', type=int, default=100,
+    group_train.add_argument('--epoch_num', type=int, default=50,
                              help='Epoch number for total iterations.')
     group_train.add_argument('--early_stop', action='store_false',
                              help='Whether to use early stopping technique during training.')
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                              help='Whether to use tqdm_dis')
 
     group_data = parser.add_argument_group('Data')
-    group_data.add_argument('--dataset', type=str, default='Clinical',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx
+    group_data.add_argument('--dataset', type=str, default='MAYO',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx
                             help='The dataset to perform training.')
     group_data.add_argument('--sample_seq_num', type=int, default=None,
                             help='The number of sequence sampled from each dataset.')
@@ -71,13 +71,13 @@ if __name__ == '__main__':
     group_arch = parser.add_argument_group('Architecture')
     group_arch.add_argument('--random_seed', type=int, default=None,
                             help="Set a specific random seed.")
-    group_arch.add_argument('--model', type=str, default='TFC',
+    group_arch.add_argument('--model', type=str, default='SimMTM',  # TFC SimMTM
                             help='The model to run.')
     group_arch.add_argument('--cnn_in_channels', type=int, default=10,
                             help="The number of input channels of the dataset.")
     group_arch.add_argument('--cnn_kernel_size', type=int, default=8,
                             help="The kernel size of the CNN to aggregate the channels.")
-    group_arch.add_argument('--final_dim', type=int, default=768,
+    group_arch.add_argument('--final_dim', type=int, default=256,
                             help="The dim of final representations.")
 
     argv = sys.argv[1:]
@@ -92,6 +92,13 @@ if __name__ == '__main__':
         args.seq_len,
         args.patch_len,
     )
+
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        if args_dict[key] == 'None':
+            args_dict[key] = None
+
+    args = argparse.Namespace(**args_dict)
 
     if args.random_seed is None:
         args.random_seed = random.randint(0, 2 ** 31)
@@ -126,8 +133,11 @@ if __name__ == '__main__':
     # if run_mode == unsupervised, will load the unsupervised ckpt to continue from break point
     # if run_mode == finetune, will also load the unsupervised ckpt to finetune
     # if run_mode == test, will load the finetune ckpt to infer
-    if args.run_mode == 'unsupervised' or args.run_mode == 'finetune':
+    if args.run_mode == 'unsupervised':
         ckpt_type = 'unsupervised'
+    elif args.run_mode == 'finetune':
+        ckpt_type = 'unsupervised'
+        assert args.load_ckpt_path is not None
     elif args.run_mode == 'test':
         ckpt_type = 'finetune'
     else:

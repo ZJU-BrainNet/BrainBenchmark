@@ -10,9 +10,7 @@ class TFC_Dataset(Dataset):
     def __init__(self, args, x, y):
         # x: (seq_num, ch_num, seq_len, patch_len)
         # y: (seq_num, )
-        seq_num, ch_num, seq_len, patch_len = x.shape
-        self.seq_num = seq_num
-        self.ch_num = ch_num
+        self.seq_num, self.ch_num, seq_len, patch_len = x.shape
 
         self.run_mode = args.run_mode
 

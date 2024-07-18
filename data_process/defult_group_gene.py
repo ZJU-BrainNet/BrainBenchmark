@@ -32,8 +32,15 @@ def sample_and_unify_length(args, sample_seq_num, x, y, ):
         k = ori_len // new_len
         new_x = x[:, ::k]
     else:
-        interp_func = interp1d(np.arange(ori_len), x, kind=args.interpolate_kind, axis=1)
-        new_x = interp_func(np.linspace(0, ori_len - 1, new_len))
+        # interp_func = interp1d(np.arange(ori_len), x, kind=args.interpolate_kind, axis=1)
+        # new_x = interp_func(np.linspace(0, ori_len - 1, new_len))
+        new_x = []
+        for i in range(x.shape[0]):
+            x_axis = np.linspace(1, ori_len, ori_len)
+            up_x_axis = np.linspace(1, ori_len, new_len)
+            new_x += [np.interp(up_x_axis, x_axis, x[i, :])]
+        new_x = np.array(new_x)
+
     new_x = new_x.reshape(-1, ch_num, args.seq_len, args.patch_len)    # (seq_num or sample_seq_num, ch_num, seq_len, patch_len)
     return new_x, y
 
@@ -50,6 +57,9 @@ def default_group_data_gene(args):
         x = x.reshape(-1, ch_num, seq_len * patch_len)
 
         x, y = sample_and_unify_length(args, args.sample_seq_num, x, y)
+
+        x = x.astype(np.float32)
+        y = y.astype(np.int64)
 
         save_path = f'{args.data_save_dir}/{args.data_id}/'
         make_dir_if_not_exist(save_path)

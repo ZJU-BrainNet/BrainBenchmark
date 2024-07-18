@@ -33,6 +33,10 @@ class BrainBERT_Trainer:
             betas=(0.9, 0.95), eps=1e-5,
         )
 
+    @staticmethod
+    def scheduler(optimizer):
+        return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[5, 10, 20], gamma=0.1)
+
 
 # def set_BrainBERT_config(parser):
 #     group_model = parser.add_argument_group('Model')

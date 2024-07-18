@@ -29,6 +29,7 @@ data_info_dict = {
         'n_class': 2,
         'label_level': 'subject_level',
         },
+
     'Clinical': {'sampled_data_path': '/data/brainnet/SEEG_npy/sampled_data/seizure_detection',
         'unsampled_data_path': '/data/brainnet/SEEG_edf',
         'group_num': 4,
@@ -37,6 +38,7 @@ data_info_dict = {
         'n_class': 2,
         'label_level': 'channel_level',    # y: (bsz, ch_num,) instead of (bsz,)
         },
+
     'SleepEDFx': {
         'data_path': '/data/brainnet/physio_signal_dataset/SleepEDFx_dataset/tinysleepnet_data/eeg_fpz_cz/group_data/',
         'group_num': 5,
@@ -53,5 +55,25 @@ data_info_dict = {
         'n_class': 5,
         'label_level': 'subject_level',
         },
-
+    'SeizureA': {'data_path': '/data/brainnet/physio_signal_dataset/SeizureA_ts/preprocess_and_segment/group_data/',
+        'group_num': 5,
+        'split': [3, 1, 1],
+        'various_ch_num': False,
+        'n_class': 2,
+        'label_level': 'subject_level',
+    },
+    'SeizureC': {'data_path': '/data/brainnet/physio_signal_dataset/SeizureC_ts/preprocess_and_segment/group_data/',
+        'group_num': 5,
+        'split': [3, 1, 1],
+        'various_ch_num': False,
+        'n_class': 2,
+        'label_level': 'subject_level',
+    },
+    'SeizureB': {'data_path': '/data/brainnet/physio_signal_dataset/SeizureB_ts/preprocess_and_segment/group_data/',
+        'group_num': 6,
+        'split': [4, 1, 1],
+        'various_ch_num': False,
+        'n_class': 2,
+        'label_level': 'subject_level',
+    },
 }

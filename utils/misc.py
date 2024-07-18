@@ -31,7 +31,8 @@ def update_logs(args, logs, epo_loss, metrics=None):
             logs[f"Prec"] = metrics.prec * 100.0
             logs[f"Rec"] = metrics.rec * 100.0
             logs[f"F2"] = metrics.f_doub * 100.0
-            logs[f"AUC"] = metrics.auc * 100.0
+            logs[f"AUPRC"] = metrics.auprc * 100.0
+            logs[f"AUROC"] = metrics.auroc * 100.0
         elif n_class == 5:
             logs[f"Loss"] = epo_loss
             logs[f"TopKAcc"] = metrics.acc * 100.0

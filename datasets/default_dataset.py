@@ -2,16 +2,12 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-from data_process.data_info import data_info_dict
-
 
 class DefaultDataset(Dataset):
     def __init__(self, args, x, y):
         # x: (seq_num, ch_num, seq_len, patch_len)
         # y: (seq_num, )
-
-        seq_num, ch_num, seq_len, patch_len = x.shape
-        self.seq_num = seq_num
+        self.seq_num, self.ch_num, seq_len, patch_len = x.shape
 
         self.x = x
         self.y = y

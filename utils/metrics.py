@@ -1,18 +1,27 @@
 # coding: UTF-8
-
+import numpy
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.special import softmax
 
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support, top_k_accuracy_score, cohen_kappa_score
 from sklearn.metrics import accuracy_score, fbeta_score
 from sklearn.metrics import f1_score
-from sklearn.metrics import auc, precision_recall_curve
+from sklearn.metrics import auc, precision_recall_curve, roc_curve
 
 
 
 class BinaryClassMetrics:
     def __init__(self, args, pred, prob, true, ):
-        pred, prob, true = pred.detach().numpy(), prob.detach().numpy(), true.detach().numpy()
+        if not isinstance(pred, np.ndarray):
+            pred, prob, true = pred.detach().numpy(), prob.detach().numpy(), true.detach().numpy()
+
+        # 检查所有样本的和是否接近1
+        checks = np.isclose(prob.sum(axis=1), 1, rtol=1e-03)  # 设置一个接受的误差范围，这里设为1e-03
+        # 如果所有样本的和都非常接近于1，那么 checks 的所有元素应该都是 True
+        is_softmaxed = np.all(checks)
+        if not is_softmaxed:
+            prob = softmax(prob, axis=-1)
 
         if args.dataset == 'Clinical' and args.run_mode == 'test':
             # remove label==2 in the Clinical inferring file
@@ -42,32 +51,35 @@ class BinaryClassMetrics:
         self.f_doub = fbeta_score(true, pred, average='binary', beta=2)
 
         precision, recall, thresholds = precision_recall_curve(true, prob[:, 1])
-        self.auc = auc(recall, precision)
+        self.auprc = auc(recall, precision)
+
+        fpr, tpr, thresholds = roc_curve(true, prob[:, 1])
+        self.auroc = auc(fpr, tpr)
 
         self.conf_matrix = self.get_confusion()
 
     def get_confusion(self):
         return f"TP={self.tp}, TN={self.tn}, FP={self.fp}, FN={self.fn} " if not self.special_good else "special_good"
 
-    def get_metrics(self, one_line=False):
-        if one_line:
-            out = 'Acc:%.4f Prec:%.4f Rec:%.4f F1:%.4f F2:%.4f AUC:%.4f' \
-                  % (self.acc, self.prec, self.rec, self.f_one, self.f_doub, self.auc)
-        else:
-            out = ''
-            out += '-' * 15 + 'Metrics' + '-' * 15 + '\n'
-            out += 'Accuracy:  ' + str(self.acc) + '\n'
-            out += 'Precision: ' + str(self.prec) + '\n'
-            out += 'Recall:    ' + str(self.rec) + '\n'
-            # out += 'F0.5:      ' + str(self.f_half) + '\n'
-            out += 'F1:        ' + str(self.f_one) + '\n'
-            out += 'F2:        ' + str(self.f_doub) + '\n'
-            out += 'AUC:       ' + str(self.auc) + '\n'
-        return out if not self.special_good else "special_good"
-
-    @staticmethod
-    def fbeta(precision, recall, beta):
-        return (1 + beta ** 2) * (precision * recall) / ((beta ** 2 * precision) + recall)
+    # def get_metrics(self, one_line=False):
+    #     if one_line:
+    #         out = 'Acc:%.4f Prec:%.4f Rec:%.4f F1:%.4f F2:%.4f AUPRC:%.4f AUROC:%.4f' \
+    #               % (self.acc, self.prec, self.rec, self.f_one, self.f_doub, self.auprc, self.auroc)
+    #     else:
+    #         out = ''
+    #         out += '-' * 15 + 'Metrics' + '-' * 15 + '\n'
+    #         out += 'Accuracy:  ' + str(self.acc) + '\n'
+    #         out += 'Precision: ' + str(self.prec) + '\n'
+    #         out += 'Recall:    ' + str(self.rec) + '\n'
+    #         out += 'F1:        ' + str(self.f_one) + '\n'
+    #         out += 'F2:        ' + str(self.f_doub) + '\n'
+    #         out += 'AUROC:     ' + str(self.auprc) + '\n'
+    #         out += 'AUPRC:     ' + str(self.auroc) + '\n'
+    #     return out if not self.special_good else "special_good"
+    #
+    # @staticmethod
+    # def fbeta(precision, recall, beta):
+    #     return (1 + beta ** 2) * (precision * recall) / ((beta ** 2 * precision) + recall)
 
 
 

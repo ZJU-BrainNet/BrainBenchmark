@@ -3,6 +3,17 @@ from torch import nn
 from argparse import Namespace
 
 
+def _weights_init(m):
+    if isinstance(m, nn.Linear):
+        nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+    if isinstance(m, nn.Conv1d):
+        nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+    elif isinstance(m, nn.BatchNorm1d):
+        nn.init.constant_(m.weight, 1)
+        nn.init.constant_(m.bias, 0)
+
+
+
 class ChannelCNN(torch.nn.Module):
     def __init__(self, args: Namespace):
         super(ChannelCNN, self).__init__()
@@ -33,21 +44,19 @@ class ChannelAggrClsf(torch.nn.Module):
         self.cnn = ChannelCNN(args)
 
         # classifier
-        self.d_model = args.final_dim
-        self.out_dim = args.n_class
-
-        self.hidden = 2 * (self.d_model + self.out_dim) // 3
-        self.head = nn.Sequential(
-            nn.Linear(self.d_model, self.out_dim),
-            nn.ReLU(),
-            nn.Dropout(0.1)
+        self.mlp = nn.Sequential(
+            nn.Linear(args.final_dim, args.final_dim // 2),
+            nn.ReLU(inplace=True),
+            nn.Linear(args.final_dim // 2, args.n_class),
         )
-        self.softmax = nn.Softmax(dim=-1)
+        self.apply(_weights_init)
 
     def forward(self, x):
         # x: (bsz, ch_num, seq_len, patch_len)
         x = self.cnn(x)     # x: (bsz, final_dim)
 
-        logit = self.softmax(self.head(x))
+        # logit = self.softmax(self.mlp(x)) # MUST NOT softmax IN THE CLSF
+        logit = self.mlp(x)
 
         return logit  # (bsz, num_class)
+

@@ -9,13 +9,11 @@ import sys
 import argparse
 import json
 from copy import deepcopy
-
 from torch import nn
 
 from utils.misc import set_seed, load_checkpoint, save_logs, save_checkpoint, update_main_logs, show_logs, process_init
 process_init()
 
-from model.BrainBERT.BrainBERT import BrainBERT, BrainBERT_Trainer
 from model.ch_aggr_clsf import ChannelAggrClsf
 from pipeline.eval_epoch import evaluate_epoch
 from pipeline.train_epoch import train_epoch
@@ -23,21 +21,22 @@ from utils.meta_info import get_data_dict, \
     trainer_dict, model_dict
 from data_process.data_info import data_info_dict
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='BrainBenchmark')
 
     group_train = parser.add_argument_group('Train')
     group_train.add_argument('--exp_id', type=str, default='-1',
                              help='The experimental id.')
-    group_train.add_argument('--gpu_id', type=int, default=6,
+    group_train.add_argument('--gpu_id', type=int, default=0,
                              help='The gpu id.')
-    group_train.add_argument('--cv_id', type=int, default=0,
+    group_train.add_argument('--cv_id', type=int, default=4,
                              help='The cross validation id.')
     group_train.add_argument('--run_mode', type=str, default='test',   # finetune, test
                              help='To perform finetuning, or testing.')
-    group_train.add_argument('--batch_size', type=int, default=16,
+    group_train.add_argument('--batch_size', type=int, default=128,
                              help='Number of batches.')
-    group_train.add_argument('--save_epochs', type=int, default=3,
+    group_train.add_argument('--save_epochs', type=int, default=5,
                              help='The epoch number to save checkpoint.')
     group_train.add_argument('--epoch_num', type=int, default=60,
                              help='Epoch number for total iterations.')
@@ -53,7 +52,7 @@ if __name__ == '__main__':
                              help='Whether to load the best state in the checkpoints (to continue unsupervised training or begin finetuning).')
     group_train.add_argument('--save_ckpt_path', type=str, default='/data/brainnet/benchmark/ckpt/',
                              help='The path to save checkpoint')
-    group_train.add_argument('--model_lr', type=float, default=3e-4,
+    group_train.add_argument('--model_lr', type=float, default=1e-5,
                              help='The learning rate of the pretrained model.')
     group_train.add_argument('--clsf_lr', type=float, default=3e-4,
                              help='The learning rate of the classifier.')
@@ -61,13 +60,13 @@ if __name__ == '__main__':
                              help='Whether to use tqdm_dis')
 
     group_data = parser.add_argument_group('Data')
-    group_data.add_argument('--dataset', type=str, default='Clinical',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx
+    group_data.add_argument('--dataset', type=str, default='SeizureB',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB
                             help='The dataset to perform training.')
     group_data.add_argument('--sample_seq_num', type=int, default=None,
                             help='The number of sequence sampled from each dataset.')
-    group_data.add_argument('--seq_len', type=int, default=15,
+    group_data.add_argument('--seq_len', type=int, default=8,
                             help='The number of patches in a sequence.')
-    group_data.add_argument('--patch_len', type=int, default=100,
+    group_data.add_argument('--patch_len', type=int, default=128,
                             help='The number of points in a patch.')
     group_data.add_argument('--data_load_dir', type=str, default='/data/brainnet/benchmark/gene_data/',
                             help='The path to load the generated data.')
@@ -75,11 +74,11 @@ if __name__ == '__main__':
                             help='Number of processes to call to load the dataset.')
 
     group_arch = parser.add_argument_group('Architecture')
-    group_arch.add_argument('--random_seed', type=int, default=272686785,
+    group_arch.add_argument('--random_seed', type=int, default=None,
                             help="Set a specific random seed.")
-    group_arch.add_argument('--model', type=str, default='GPT4TS',   # BrainBERT GPT4TS
+    group_arch.add_argument('--model', type=str, default='BIOT',   # BrainBERT GPT4TS Brant1 Brant2 BIOT LaBraM
                             help='The model to run.')
-    group_arch.add_argument('--cnn_in_channels', type=int, default=10,
+    group_arch.add_argument('--cnn_in_channels', type=int, default=19,
                             help="The number of input channels of the dataset.")
     group_arch.add_argument('--cnn_kernel_size', type=int, default=8,
                             help="The kernel size of the CNN to aggregate the channels.")
@@ -89,13 +88,13 @@ if __name__ == '__main__':
 
     trainer = trainer_dict[args.model](args)
 
-    args = trainer.set_config(args)
     args.data_id = '{}_ssn{}_sl{}_pl{}'.format(
         args.dataset,
         args.sample_seq_num,
         args.seq_len,
         args.patch_len,
     )
+    args = trainer.set_config(args)
 
     if args.random_seed is None:
         args.random_seed = random.randint(0, 2 ** 31)
@@ -118,8 +117,10 @@ if __name__ == '__main__':
     model = model_dict[args.model](args).to(device)
     clsf = ChannelAggrClsf(args).to(device)
 
+
     loss_func = trainer.clsf_loss_func(args)
     optimizer = trainer.optimizer(args, model, clsf)
+    scheduler = trainer.scheduler(optimizer)
 
 
     best_vl_loss = np.inf
@@ -173,7 +174,6 @@ if __name__ == '__main__':
         ts_x_list, ts_y_list = get_data_dict[args.dataset](args, step='test')
 
         ts_logs, ts_loss = evaluate_epoch(args, ts_x_list, ts_y_list, model, clsf, loss_func, step='test')
-        show_logs('[Test]', ts_logs, None)
         exit(0)
 
     # Settings to save ckpt
@@ -200,7 +200,7 @@ if __name__ == '__main__':
         print(f"Epoch {epoch}")
         # cpu_stats()
 
-        tr_logs, tr_loss = train_epoch(args, tr_x_list, tr_y_list, model, clsf, loss_func, optimizer, )
+        tr_logs, tr_loss = train_epoch(args, tr_x_list, tr_y_list, model, clsf, loss_func, optimizer, scheduler,)
         vl_logs, vl_loss = evaluate_epoch(args, vl_x_list, vl_y_list, model, clsf, loss_func, step='valid')
 
         # print(f'Ran {epoch - start_epoch + 1} epochs in {time.time() - start_time:.2f} seconds')

@@ -94,3 +94,11 @@ if __name__ == '__main__':
     indices = list(range(1, 5))  # g1, g2, g3, g4
     shift = 1
     indices = indices[-shift:] + indices[:-shift]
+
+    indices = list(range(1, 5))   # g1, g2, g3, g4
+    for shift in range(5):
+        indices = indices[-shift:] + indices[:-shift]
+
+        tr_indices = indices[ : split[0]]
+        vl_indices = indices[split[0] : -split[2]]
+        ts_indices = indices[-split[2] : ]

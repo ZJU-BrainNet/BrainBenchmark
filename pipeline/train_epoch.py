@@ -9,7 +9,7 @@ from utils.meta_info import dataset_class_dict, metrics_dict
 from utils.misc import update_logs, show_logs
 
 
-def train_epoch(args, tr_x_list, tr_y_list, model, clsf, loss_func, optimizer, ):
+def train_epoch(args, tr_x_list, tr_y_list, model, clsf, loss_func, optimizer, scheduler=None):
     model.train()
     clsf.train()
     device = next(model.parameters()).device
@@ -57,6 +57,8 @@ def train_epoch(args, tr_x_list, tr_y_list, model, clsf, loss_func, optimizer, )
             batch_cnt += 1
             epo_loss += batch_loss.detach().cpu().numpy()
 
+        if scheduler is not None:
+            scheduler.step()
         train_dataset.reload_pool.close()
 
     if args.run_mode == 'finetune' or args.run_mode == 'test':
