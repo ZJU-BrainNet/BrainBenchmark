@@ -28,17 +28,17 @@ if __name__ == '__main__':
     group_train = parser.add_argument_group('Train')
     group_train.add_argument('--exp_id', type=str, default='-1',
                              help='The experimental id.')
-    group_train.add_argument('--gpu_id', type=int, default=0,
+    group_train.add_argument('--gpu_id', type=int, default=3,
                              help='The gpu id.')
-    group_train.add_argument('--cv_id', type=int, default=4,
+    group_train.add_argument('--cv_id', type=int, default=0,
                              help='The cross validation id.')
-    group_train.add_argument('--run_mode', type=str, default='test',   # finetune, test
+    group_train.add_argument('--run_mode', type=str, default='finetune',   # finetune, test
                              help='To perform finetuning, or testing.')
-    group_train.add_argument('--batch_size', type=int, default=128,
+    group_train.add_argument('--batch_size', type=int, default=16,
                              help='Number of batches.')
     group_train.add_argument('--save_epochs', type=int, default=5,
                              help='The epoch number to save checkpoint.')
-    group_train.add_argument('--epoch_num', type=int, default=60,
+    group_train.add_argument('--epoch_num', type=int, default=15,
                              help='Epoch number for total iterations.')
     group_train.add_argument('--early_stop', action='store_false',
                              help='Whether to use early stopping technique during training.')
@@ -60,7 +60,7 @@ if __name__ == '__main__':
                              help='Whether to use tqdm_dis')
 
     group_data = parser.add_argument_group('Data')
-    group_data.add_argument('--dataset', type=str, default='SeizureB',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB
+    group_data.add_argument('--dataset', type=str, default='SeizureB',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB UCSD_ON UCSD_OFF HUSM RepOD
                             help='The dataset to perform training.')
     group_data.add_argument('--sample_seq_num', type=int, default=None,
                             help='The number of sequence sampled from each dataset.')
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     group_arch = parser.add_argument_group('Architecture')
     group_arch.add_argument('--random_seed', type=int, default=None,
                             help="Set a specific random seed.")
-    group_arch.add_argument('--model', type=str, default='BIOT',   # BrainBERT GPT4TS Brant1 Brant2 BIOT LaBraM
+    group_arch.add_argument('--model', type=str, default='Brant1',   # BrainBERT GPT4TS Brant1 Brant2 BIOT LaBraM
                             help='The model to run.')
     group_arch.add_argument('--cnn_in_channels', type=int, default=19,
                             help="The number of input channels of the dataset.")
@@ -234,7 +234,8 @@ if __name__ == '__main__':
                 best_model_state,
                 best_clsf_state,
                 best_vl_loss,
-                f"{args.save_ckpt_path}/{epoch}.pt",
+                f"{args.save_ckpt_path}/0.pt",
+                # f"{args.save_ckpt_path}/{epoch}.pt",
             )
             save_logs(main_logs, f"{args.save_ckpt_path}/logs.json")
             print('Checkpoint and main logs saved.')

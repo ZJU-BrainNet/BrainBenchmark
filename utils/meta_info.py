@@ -30,6 +30,10 @@ group_data_gene_dict = {
     'SeizureA': default_group_data_gene,
     'SeizureC': default_group_data_gene,
     'SeizureB': default_group_data_gene,
+    'RepOD': default_group_data_gene,
+    'UCSD_ON': default_group_data_gene,
+    'UCSD_OFF': default_group_data_gene,
+    'HUSM': default_group_data_gene,
 }
 
 get_data_dict = {
@@ -42,6 +46,10 @@ get_data_dict = {
     'SeizureA': default_get_data,
     'SeizureC': default_get_data,
     'SeizureB': default_get_data,
+    'RepOD': default_get_data,
+    'UCSD_ON': default_get_data,
+    'UCSD_OFF': default_get_data,
+    'HUSM': default_get_data,
 }
 
 metrics_dict = {
@@ -54,6 +62,10 @@ metrics_dict = {
     'SeizureA': BinaryClassMetrics,
     'SeizureC': BinaryClassMetrics,
     'SeizureB': BinaryClassMetrics,
+    'RepOD': BinaryClassMetrics,
+    'UCSD_ON': BinaryClassMetrics,
+    'UCSD_OFF': BinaryClassMetrics,
+    'HUSM': BinaryClassMetrics,
 }
 
 ### To add a new method, please update the following dicts
