@@ -228,8 +228,8 @@ By the steps above, a new method can be added to the benchmark.
 | TF-C | Self-Supervised Contrastive Pre-Training for Time  Series via Time-Frequency Consistency | [TF-C](https://github.com/mims-harvard/TF-C-pretraining)
 
 ## Dataset
-The benchmark contains 8 public datasets and 4 private datasets. 
-* public datasets: [CHB-MIT](https://physionet.org/content/chbmit/1.0.0/), [Mayo-Clinic](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [FNUSA](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [Siena](https://www.mdpi.com/2227-9717/8/7/846), [HUSM](https://figshare.com/articles/dataset/EEG_Data_New/4244171), [UCSD](https://openneuro.org/datasets/ds002778/versions/1.0.5), [RepOD](https://repod.icm.edu.pl/dataset.xhtml?persistentId=doi:10.18150/repod.0107441), [SleepEDFx](https://physionet.org/content/sleep-edfx/1.0.0/)
+The benchmark contains 9 public datasets and 4 private datasets. 
+* public datasets: [CHB-MIT](https://physionet.org/content/chbmit/1.0.0/), [Mayo-Clinic](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [FNUSA](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [Siena](https://www.mdpi.com/2227-9717/8/7/846), [HUSM](https://figshare.com/articles/dataset/EEG_Data_New/4244171), [UCSD](https://openneuro.org/datasets/ds002778/versions/1.0.5), [RepOD](https://repod.icm.edu.pl/dataset.xhtml?persistentId=doi:10.18150/repod.0107441), [SleepEDFx](https://physionet.org/content/sleep-edfx/1.0.0/), [ISRUC](https://sleeptight.isr.uc.pt/)
 * private datasets: SeizureA, SeizureB, SeizureC, Clinical
 
 ## Benchmark
@@ -240,11 +240,11 @@ The benchmark contains 8 public datasets and 4 private datasets.
 |   Brant1 | UCSD | 100 | 100 | 100 | 100 | 100 | 100 |
 |   Brant1 | FNUSA | 91.1 | 84.81 | 90.07 | 88.85 | 96.63 | 93.42
 |   Brant1 | HUSM | 93.28 | 92.45 | 94.71 | 94.25 | 97.96 | 97.99
-|   Brant1 | RepOD |  |  |  |  |  | 
+|   Brant1 | RepOD | 63.31 | 66.68 | 88.1 | 81.06 | 87.71 | 82.25
 |   Brant1 | SeizureA | 91.77 | 21 | 13.99 | 14.44 | 61.31 | 21.23
-|   Brant1 | SeizureB |  |  |  |  |  | 
-|   Brant1 | SeizureC |  |  |  |  |  | 
-|   Brant1 | CHBMIT |  |  |  |  |  | 
+|   Brant1 | SeizureB | 79.92 | 46.8 | 72.89 | 62.53 | 92.59 | 62.7 
+|   Brant1 | SeizureC | 51.73 | 0 | 0 | 0 | 59.75 | 57.53 
+|   Brant1 | CHBMIT | 91.02 | 66.66 | 18.07 | 20.23 | 80.46 | 41.18 
 |   Brant1 | Siena |  |  |  |  |  | 
 |   Brant1 | Clinical |  |  |  |  |  | 
 |   Brant2 | MAYO | 91.393 | 73.369 | 66.125 | 66.69 | 73.302 | 
@@ -252,9 +252,6 @@ The benchmark contains 8 public datasets and 4 private datasets.
 |   Brant2 | FNUSA |  |  |  |  |  | 
 |   Brant2 | HUSM |  |  |  |  |  | 
 |   Brant2 | RepOD |  |  |  |  |  | 
-|   Brant2 | SeizureA |  |  |  |  |  | 
-|   Brant2 | SeizureB |  |  |  |  |  | 
-|   Brant2 | SeizureC |  |  |  |  |  | 
 |   Brant2 | CHBMIT |  |  |  |  |  | 
 |   Brant2 | Siena |  |  |  |  |  | 
 |   Brant2 | Clinical | 86.085 | 45.014 | 39.116 | 39.64 | 41.625 | 
@@ -262,10 +259,7 @@ The benchmark contains 8 public datasets and 4 private datasets.
 |   BrainBERT | UCSD |  |  |  |  |  | 
 |   BrainBERT | FNUSA | 84.473 | 79.49 | 67.787 | 69.668 | 80.961 | 
 BrainBERT | HUSM |  |  |  |  |  | 
-BrainBERT | RepOD |  |  |  |  |  | 
-BrainBERT | SeizureA |  |  |  |  |  | 
-BrainBERT | SeizureB |  |  |  |  |  | 
-BrainBERT | SeizureC |  |  |  |  |  | 
+BrainBERT | RepOD |  |  |  |  |  |  
 BrainBERT | CHBMIT |  |  |  |  |  | 
 BrainBERT | Siena |  |  |  |  |  | 
 BrainBERT | Clinical | 78.636 | 49.551 | 67.252 | 61.133 | 62.824 | 
@@ -274,9 +268,6 @@ GPT4TS | UCSD |  |  |  |  |  |
 GPT4TS | FNUSA | 46.175 | 46.175 | 100 | 78.466 | 40.822 | 
 GPT4TS | HUSM |  |  |  |  |  | 
 GPT4TS | RepOD |  |  |  |  |  | 
-GPT4TS | SeizureA |  |  |  |  |  | 
-GPT4TS | SeizureB |  |  |  |  |  | 
-GPT4TS | SeizureC |  |  |  |  |  | 
 GPT4TS | CHBMIT |  |  |  |  |  | 
 GPT4TS | Siena |  |  |  |  |  | 
 GPT4TS | Clinical | 67.345 | 50.211 | 79.753 | 66.836 | 55.212 | 
@@ -285,20 +276,13 @@ SimMTM | UCSD |  |  |  |  |  |
 SimMTM | FNUSA |  |  |  |  |  | 
 SimMTM | HUSM |  |  |  |  |  | 
 SimMTM | RepOD |  |  |  |  |  | 
-SimMTM | SeizureA |  |  |  |  |  | 
-SimMTM | SeizureB |  |  |  |  |  | 
-SimMTM | SeizureC |  |  |  |  |  | 
 SimMTM | CHBMIT |  |  |  |  |  | 
 SimMTM | Siena |  |  |  |  |  | 
-SimMTM | Clinical |  |  |  |  |  | 
 TF-C | MAYO | 88.635 | 54.12 | 48.162 | 48.276 | 48.975 | 
 TF-C | UCSD |  |  |  |  |  | 
 TF-C | FNUSA | 86.475 | 91.382 | 80.908 | 82.807 | 95.129 | 
 TF-C | HUSM |  |  |  |  |  | 
 TF-C | RepOD |  |  |  |  |  | 
-TF-C | SeizureA |  |  |  |  |  | 
-TF-C | SeizureB |  |  |  |  |  | 
-TF-C | SeizureC |  |  |  |  |  | 
 TF-C | CHBMIT |  |  |  |  |  | 
 TF-C | Siena |  |  |  |  |  | 
 TF-C | Clinical | 69.774 | 36.014 | 56.045 | 47.266 | 51.283 | 
@@ -323,4 +307,3 @@ LaBraM | SeizureB | 54.241 | 49.66 | 60.768 | 47.913 | 69.352 |
 LaBraM | SeizureC | 51.622 | 44.634 | 95.909 | 65.637 | 60.898 | 
 LaBraM | CHBMIT | 91.931 | 53.317 | 71.625 | 67.013 | 91.11 | 
 LaBraM | Siena | 84.971 | 35.782 | 62.705 | 53.893 | 84.87 | 
-LaBraM | Clinical |  |  |  |  |  | 

@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='BrainBenchmark')
 
     group_database = parser.add_argument_group('DataGene')
-    group_database.add_argument('--dataset', type=str, default='UCSD_OFF',   # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB RepOD UCSD_ON UCSD_OFF
+    group_database.add_argument('--dataset', type=str, default='Clinical',   # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB RepOD UCSD_ON UCSD_OFF
                                 help='What dataset we need to generate from.')
     group_database.add_argument('--sample_seq_num', type=float, default=None,
                                 help='How many sequence samples in a group we need to sample from the dataset.')

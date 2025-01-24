@@ -104,4 +104,11 @@ data_info_dict = {
         'n_class': 2,
         'label_level': 'subject_level',
     },
+    'ISRUC': {'data_path': '/data/brainnet/physio_signal_dataset/ISRUC_dataset/group_data/',
+        'group_num': 4,
+        'split': [2, 1, 1],
+        'various_ch_num': False,
+        'n_class': 5,
+        'label_level': 'subject_level',
+    },
 }
