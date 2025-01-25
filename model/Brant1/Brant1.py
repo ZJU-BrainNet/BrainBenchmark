@@ -24,7 +24,12 @@ class Brant1_Trainer:
 
     @staticmethod
     def clsf_loss_func(args):
-        ce_weight = [0.8, 1]
+        if args.n_class != 2:
+            import numpy as np
+            ce_weight = [0.8 for _ in range(args.n_class - 1)]
+            ce_weight.append(1.0)
+        else:
+            ce_weight = [0.8, 1]
         print(f'CrossEntropy loss weight = {ce_weight} = {ce_weight[1]/ce_weight[0]:.2f}')
         return nn.CrossEntropyLoss(torch.tensor(ce_weight, dtype=torch.float32, device=torch.device(args.gpu_id)))
         # return nn.CrossEntropyLoss()
@@ -156,9 +161,9 @@ class Brant1(nn.Module):
         if args.load_pretrained:
             # map_location = {'cuda:%d' % 0 : 'cuda:%d' % args.gpu_id}
             map_location = 'cuda:%d' % args.gpu_id
-            t_state_dict  = torch.load(f'/data/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
+            t_state_dict  = torch.load(f'/data/share/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
                                        map_location=map_location)
-            ch_state_dict = torch.load(f'/data/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_ch_{args.start_epo_idx}.pt',
+            ch_state_dict = torch.load(f'/data/share/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_ch_{args.start_epo_idx}.pt',
                                        map_location=map_location)
             # t_state_dict  = torch.load(f'/home/nas/share/data_backup/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
             #                            map_location=map_location)

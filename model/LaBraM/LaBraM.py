@@ -29,7 +29,7 @@ class LaBraM_Trainer:
         args.layer_scale_init_value = 0.1
         args.qkv_bias = True
 
-        args.finetune = '/data/brainnet/benchmark/pretrained_weights/LaBraM/labram-base.pth'
+        args.finetune = '/data/share/benchmark/pretrained_weights/LaBraM/labram-base.pth'
 
         args.model_key = 'model|module'
         args.model_filter_name = 'gzp'
@@ -42,7 +42,11 @@ class LaBraM_Trainer:
 
     @staticmethod
     def clsf_loss_func(args):
-        ce_weight = [1.2, 1]
+        if args.n_class != 2:
+            ce_weight = [1.2 for _ in range(args.n_class - 1)]
+            ce_weight.append(1.0)
+        else:
+            ce_weight = [1.2, 1]
         print(f'CrossEntropy loss weight = {ce_weight} = {ce_weight[1]/ce_weight[0]:.2f}')
         return nn.CrossEntropyLoss(torch.tensor(ce_weight, dtype=torch.float32, device=torch.device(args.gpu_id)))
         # return nn.CrossEntropyLoss()
@@ -70,7 +74,9 @@ class LaBraM_Trainer:
 class LaBraM(nn.Module):
     def __init__(self, args: Namespace,):
         super(LaBraM, self).__init__()
-
+        if args.patch_len > 200:
+            kernel_size = args.patch_len // 200 + (1 if args.patch_len % 200 > 0 else 0)
+            self.conv = nn.Conv1d(in_channels=1, out_channels=1, kernel_size=kernel_size, stride=kernel_size-1)
         self.cnn = ConvNet(num_inputs=1, num_channels=[200])
         self.model_clsf = self.load_pretrained_weights(args)
         self.model_clsf = self.freeze_part(args, self.model_clsf)
@@ -78,7 +84,9 @@ class LaBraM(nn.Module):
     def forward(self, x):
         bsz, ch_num, seq_len, patch_len = x.shape
 
-        x = x.reshape(bsz*ch_num*seq_len, 1, patch_len)
+        x = x.reshape(-1, 1, patch_len)
+        if patch_len > 200:
+            x = self.conv(x)
         emb = self.cnn(x)
         emb = torch.mean(emb, dim=-1).reshape(bsz, ch_num, seq_len, -1)
 
@@ -123,7 +131,7 @@ class LaBraM(nn.Module):
         model = create_model(
             'labram_base_patch200_200',
             pretrained=False,
-            num_classes=args.nb_classes,
+            num_classes=args.n_class,
             drop_rate=args.drop,
             drop_path_rate=args.drop_path,
             attn_drop_rate=args.attn_drop_rate,

@@ -28,13 +28,13 @@ if __name__ == '__main__':
     group_train = parser.add_argument_group('Train')
     group_train.add_argument('--exp_id', type=str, default='-1',
                              help='The experimental id.')
-    group_train.add_argument('--gpu_id', type=int, default=5,
+    group_train.add_argument('--gpu_id', type=int, default=0,
                              help='The gpu id.')
     group_train.add_argument('--cv_id', type=int, default=0,
                              help='The cross validation id.')
-    group_train.add_argument('--run_mode', type=str, default='finetune',   # finetune, test
+    group_train.add_argument('--run_mode', type=str, default='test',   # finetune, test
                              help='To perform finetuning, or testing.')
-    group_train.add_argument('--batch_size', type=int, default=8,
+    group_train.add_argument('--batch_size', type=int, default=64,
                              help='Number of batches.')
     group_train.add_argument('--save_epochs', type=int, default=5,
                              help='The epoch number to save checkpoint.')
@@ -46,11 +46,11 @@ if __name__ == '__main__':
                              help='The waiting epoch number for early stopping.')
     group_train.add_argument('--from_pretrained', action='store_false', # when not --from_pretrained, must set the load_ckpt_path
                              help='Whether to finetune from pretrained weights')
-    group_train.add_argument('--load_ckpt_path', type=str, default='/data/brainnet/benchmark/ckpt/',    # None '/data/brainnet/benchmark/ckpt/'
+    group_train.add_argument('--load_ckpt_path', type=str, default='/data/share/benchmark/ckpt/',    # None '/data/brainnet/benchmark/ckpt/'
                              help='The path to load checkpoint (.pt file or the upper path).')
     group_train.add_argument('--load_best', action='store_false',
                              help='Whether to load the best state in the checkpoints (to continue unsupervised training or begin finetuning).')
-    group_train.add_argument('--save_ckpt_path', type=str, default='/data/brainnet/benchmark/ckpt/',
+    group_train.add_argument('--save_ckpt_path', type=str, default='/data/share/benchmark/ckpt/',
                              help='The path to save checkpoint')
     group_train.add_argument('--model_lr', type=float, default=1e-5,
                              help='The learning rate of the pretrained model.')
@@ -60,15 +60,15 @@ if __name__ == '__main__':
                              help='Whether to use tqdm_dis')
 
     group_data = parser.add_argument_group('Data')
-    group_data.add_argument('--dataset', type=str, default='Clinical',  # MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB UCSD_ON UCSD_OFF HUSM RepOD
+    group_data.add_argument('--dataset', type=str, default='UCSD_ON',  # ISRUC MAYO FNUSA CHBMIT Siena Clinical SleepEDFx SeizureA SeizureC SeizureB UCSD_ON UCSD_OFF HUSM RepOD
                             help='The dataset to perform training.')
     group_data.add_argument('--sample_seq_num', type=int, default=None,
                             help='The number of sequence sampled from each dataset.')
-    group_data.add_argument('--seq_len', type=int, default=15,
+    group_data.add_argument('--seq_len', type=int, default=20,
                             help='The number of patches in a sequence.')
-    group_data.add_argument('--patch_len', type=int, default=100,
+    group_data.add_argument('--patch_len', type=int, default=256,
                             help='The number of points in a patch.')
-    group_data.add_argument('--data_load_dir', type=str, default='/data/brainnet/benchmark/gene_data/',
+    group_data.add_argument('--data_load_dir', type=str, default='/data/share/benchmark/gene_data/',
                             help='The path to load the generated data.')
     group_data.add_argument('--n_process_loader', type=int, default=5,
                             help='Number of processes to call to load the dataset.')
@@ -76,9 +76,9 @@ if __name__ == '__main__':
     group_arch = parser.add_argument_group('Architecture')
     group_arch.add_argument('--random_seed', type=int, default=None,
                             help="Set a specific random seed.")
-    group_arch.add_argument('--model', type=str, default='Brant1',   # BrainBERT GPT4TS Brant1 Brant2 BIOT LaBraM
+    group_arch.add_argument('--model', type=str, default='LaBraM',   # BrainBERT GPT4TS Brant1 Brant2 BIOT LaBraM
                             help='The model to run.')
-    group_arch.add_argument('--cnn_in_channels', type=int, default=10,
+    group_arch.add_argument('--cnn_in_channels', type=int, default=32,
                             help="The number of input channels of the dataset.")
     group_arch.add_argument('--cnn_kernel_size', type=int, default=8,
                             help="The kernel size of the CNN to aggregate the channels.")
@@ -170,12 +170,6 @@ if __name__ == '__main__':
         best_model_state = deepcopy(model.state_dict())
         best_clsf_state  = deepcopy(clsf .state_dict())
 
-    if args.run_mode == 'test':
-        ts_x_list, ts_y_list = get_data_dict[args.dataset](args, step='test')
-
-        ts_logs, ts_loss = evaluate_epoch(args, ts_x_list, ts_y_list, model, clsf, loss_func, step='test')
-        exit(0)
-
     # Settings to save ckpt
     if args.save_ckpt_path is not None:
         args.save_ckpt_path = f'{args.save_ckpt_path}/{args.model}_exp{args.exp_id}_cv{args.cv_id}_{args.data_id}/{args.run_mode}_ckpt/'
@@ -187,6 +181,12 @@ if __name__ == '__main__':
             os.mkdir(args.save_ckpt_path)
             print(f'To begin the finetuning, have deleted the existing save_ckpt_path in {args.save_ckpt_path}')
 
+    if args.run_mode == 'test':
+        ts_x_list, ts_y_list = get_data_dict[args.dataset](args, step='test')
+
+        ts_logs, _ = evaluate_epoch(args, ts_x_list, ts_y_list, model, clsf, loss_func, step='test')
+        save_logs(ts_logs, f"{args.save_ckpt_path}/test_logs.json")
+        exit(0)
     print('-' * 50)
 
     print(f"Running at most {args.epoch_num} epochs")

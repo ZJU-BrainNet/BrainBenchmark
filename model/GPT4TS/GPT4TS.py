@@ -21,7 +21,11 @@ class GPT4TS_Trainer:
 
     @staticmethod
     def clsf_loss_func(args):
-        ce_weight = [0.1, 1]
+        if args.n_class != 2:
+            ce_weight = [0.1 for _ in range(args.n_class - 1)]
+            ce_weight.append(1.0)
+        else:
+            ce_weight = [0.1, 1]
         print(f'CrossEntropy loss weight = {ce_weight} = {ce_weight[1]/ce_weight[0]}')
         return nn.CrossEntropyLoss(torch.tensor(ce_weight, dtype=torch.float32, device=torch.device(args.gpu_id)))
 

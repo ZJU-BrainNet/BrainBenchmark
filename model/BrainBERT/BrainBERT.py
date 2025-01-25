@@ -19,7 +19,11 @@ class BrainBERT_Trainer:
 
     @staticmethod
     def clsf_loss_func(args):
-        ce_weight = [0.1, 1]
+        if args.n_class != 2:
+            ce_weight = [0.1 for _ in range(args.n_class - 1)]
+            ce_weight.append(1.0)
+        else:
+            ce_weight = [0.1, 1]
         print(f'CrossEntropy loss weight = {ce_weight} = {ce_weight[1]/ce_weight[0]:.2f}')
         return nn.CrossEntropyLoss(torch.tensor(ce_weight, dtype=torch.float32, device=torch.device(args.gpu_id)))
 
@@ -165,7 +169,7 @@ class BrainBERT(nn.Module):
             return model
 
         # cfg = OmegaConf.create({"upstream_ckpt": '/data/yzz/Brant-2/baseline_ckpt/BrainBERT/stft_large_pretrained.pth'})
-        cfg = OmegaConf.create({"upstream_ckpt": '/data/brainnet/benchmark/pretrained_weights/BrainBERT/stft_large_pretrained.pth'})
+        cfg = OmegaConf.create({"upstream_ckpt": '/data/share/benchmark/pretrained_weights/BrainBERT/stft_large_pretrained.pth'})
         model = _build_model(cfg, args.gpu_id).to(args.gpu_id)
         return model
 

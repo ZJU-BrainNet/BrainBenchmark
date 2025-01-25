@@ -83,24 +83,20 @@ class BinaryClassMetrics:
 
 
 
-
-
 class MultiClassMetrics:
-    def __init__(self, basic_args, pred, prob, true, num_class, k=5,):
+    def __init__(self, basic_args, pred, prob, true):
+        num_class = basic_args.n_class
         pred, prob, true = pred.detach().numpy(), prob.detach().numpy(), true.detach().numpy()
+
+        k = getattr(basic_args, 'k', 3)
 
         self.k = k
         self.acc = top_k_accuracy_score(true, prob, k=k, labels=np.arange(num_class))
-
+        
         # self.prec_micro, self.rec_micro, *_ = precision_recall_fscore_support(true, pred, average='micro', zero_division=0)
         # self.f_half_micro = fbeta_score(true, pred, average='micro', beta=0.5)
         # self.f_one_micro  = fbeta_score(true, pred, average='micro', beta=1)
         # self.f_doub_micro = fbeta_score(true, pred, average='micro', beta=2)
-        #
-        # self.prec_macro, self.rec_macro, *_ = precision_recall_fscore_support(true, pred, average='macro', zero_division=0)
-        # self.f_half_macro = fbeta_score(true, pred, average='macro', beta=0.5)
-        # self.f_one_macro  = fbeta_score(true, pred, average='macro', beta=1)
-        # self.f_doub_macro = fbeta_score(true, pred, average='macro', beta=2)
 
         res = []
         for l in range(num_class):
@@ -115,7 +111,7 @@ class MultiClassMetrics:
         self.f_one_macro  = fbeta_score(true, pred, average='macro', beta=1)
         self.kappa = cohen_kappa_score(true, pred)
 
-        self.conf_matrix = ('\n' + str(confusion_matrix(true, pred))) if basic_args.print_matrix else ''
+        self.conf_matrix = ('\n' + str(confusion_matrix(true, pred))) if hasattr(basic_args, 'print_matrix') and basic_args.print_matrix else ''
 
         self.f1_scores = f1_score(true, pred, average=None)
 

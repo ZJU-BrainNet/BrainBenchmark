@@ -34,6 +34,7 @@ group_data_gene_dict = {
     'UCSD_ON': default_group_data_gene,
     'UCSD_OFF': default_group_data_gene,
     'HUSM': default_group_data_gene,
+    'ISRUC': default_group_data_gene,
 }
 
 get_data_dict = {
@@ -50,6 +51,7 @@ get_data_dict = {
     'UCSD_ON': default_get_data,
     'UCSD_OFF': default_get_data,
     'HUSM': default_get_data,
+    'ISRUC': default_get_data,
 }
 
 metrics_dict = {
@@ -66,6 +68,7 @@ metrics_dict = {
     'UCSD_ON': BinaryClassMetrics,
     'UCSD_OFF': BinaryClassMetrics,
     'HUSM': BinaryClassMetrics,
+    'ISRUC': MultiClassMetrics,
 }
 
 ### To add a new method, please update the following dicts
