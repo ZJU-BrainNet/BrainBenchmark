@@ -82,11 +82,16 @@ class SimMTM(nn.Module):
             self.awl = AutomaticWeightedLoss(2)
             self.contrastive = ContrastiveWeight(args)
             self.aggregation = AggregationRebuild(args)
-            self.head = nn.Linear(args.final_dim, 1500)
+            self.head = nn.Linear(args.final_dim, args.seq_len*args.patch_len)
             self.mse = torch.nn.MSELoss()
 
     def forward(self, x_in_t, pretrain=False):
 
+        # SimTMT model can only process single-channel data, and channel merging is required
+        bsz, ch_num = x_in_t.shape[0], x_in_t.shape[1]
+        x_in_t = x_in_t.reshape(bsz * ch_num, -1)
+        x_in_t = torch.unsqueeze(x_in_t, dim=1) 
+        
         if pretrain:
             x = self.conv_block1(x_in_t)
             x = self.conv_block2(x)
@@ -106,13 +111,6 @@ class SimMTM(nn.Module):
 
             return loss
         else:
-            bsz, ch_num, _, _ = x_in_t.shape
-            x_in_t = x_in_t.reshape(bsz, ch_num, -1)
-
-            # this part if from ggf, to align seg_len into out_dim
-            bsz, ch_num, seg_len = x_in_t.shape
-            x_in_t = x_in_t.reshape(bsz * ch_num, seg_len)
-            x_in_t = torch.unsqueeze(x_in_t, dim=1)
             # x_in_t = self.cnn(x_in_t) # x_in_t: (batch size*ch_num, out_dim, seg_len')
             # x_in_t = torch.mean(x_in_t, -1) # x_in_t: (batch size*ch_num, out_dim)
             # x_in_t = x_in_t.reshape(bsz,ch_num,-1)
