@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 
 from utils.metrics import BinaryClassMetrics
+from utils.config import config
 
 parser = argparse.ArgumentParser(description='')
 group = parser.add_argument_group('Train')
@@ -38,7 +39,7 @@ args.data_id = '{}_ssn{}_sl{}_pl{}'.format(
     args.patch_len,
 )
 
-save_logit_path = f'/data/brainnet/benchmark/test_logits/{args.model}_exp{args.exp_id}_cv{args.cv_id}_{args.data_id}/'
+save_logit_path = f'{config["test_log_path"]}/{args.model}_exp{args.exp_id}_cv{args.cv_id}_{args.data_id}/'
 
 
 

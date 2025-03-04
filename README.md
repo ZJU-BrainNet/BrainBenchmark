@@ -66,7 +66,7 @@ To perform the self-supervised or unsupervised training, please run the `unsuper
 2. Then, add a new element in the `data_info_dict` from  `BrainBenchmark/data_process/data_info.py`. Taking MAYO as an example: 
 
    ```python
-   'MAYO': {'data_path': '/data/brainnet/public_dataset/MAYO/group_data_15000_2to0/',
+   'MAYO': {'data_path': '/MAYO_data_path/group_data/',
        'group_num': 6,
        'split': [3, 1, 2],
        'various_ch_num': False,

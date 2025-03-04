@@ -6,7 +6,7 @@ from einops import rearrange
 from data_process.data_info import data_info_dict
 from model.Brant1.models import TimeEncoder, ChannelEncoder
 from model.pre_cnn import ConvNet
-
+from utils.config import config
 
 class Brant1_Trainer:
     def __init__(self, args: Namespace):
@@ -19,7 +19,7 @@ class Brant1_Trainer:
         args.freeze_encoder = False
         args.final_dim = 1024
         args.start_epo_idx = 21
-        # args.power_save_path = f'/data/brainnet/benchmark/gene_data/{args.data_id}/power.npy'
+        # args.power_save_path = f'{config["gene_data_path"]}{args.data_id}/power.npy'
         return args
 
     @staticmethod
@@ -161,17 +161,13 @@ class Brant1(nn.Module):
         if args.load_pretrained:
             # map_location = {'cuda:%d' % 0 : 'cuda:%d' % args.gpu_id}
             map_location = 'cuda:%d' % args.gpu_id
-            t_state_dict  = torch.load(f'/data/share/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
+            t_state_dict  = torch.load(f'{config["Brant1_path"]}/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
                                        map_location=map_location)
-            ch_state_dict = torch.load(f'/data/share/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_ch_{args.start_epo_idx}.pt',
+            ch_state_dict = torch.load(f'{config["Brant1_path"]}/{dir_name}/encoder_ckpt/encoder_ch_{args.start_epo_idx}.pt',
                                        map_location=map_location)
-            # t_state_dict  = torch.load(f'/home/nas/share/data_backup/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
+            # t_state_dict  = torch.load(f'.../Brant1/{dir_name}/encoder_ckpt/encoder_t_{args.start_epo_idx}.pt',
             #                            map_location=map_location)
-            # ch_state_dict = torch.load(f'/home/nas/share/data_backup/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/encoder_ckpt/encoder_ch_{args.start_epo_idx}.pt',
-            #                            map_location=map_location)
-            # t_state_dict  = torch.load(f'/home/nas/share/data_backup/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/main_model_ckpt/encoder_t_3.pt',
-            #                            map_location=map_location)
-            # ch_state_dict = torch.load(f'/home/nas/share/data_backup/brainnet/benchmark/pretrained_weights/Brant1/{dir_name}/main_model_ckpt/encoder_ch_1.pt',
+            # ch_state_dict = torch.load(f'.../Brant1/{dir_name}/encoder_ckpt/encoder_ch_{args.start_epo_idx}.pt',
             #                            map_location=map_location)
             if args.unwrap_ddp:
                 t_state_dict = unwrap_ddp(t_state_dict)

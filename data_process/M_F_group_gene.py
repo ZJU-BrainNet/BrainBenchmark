@@ -7,6 +7,7 @@ from scipy.io import loadmat
 
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
+from utils.config import config
 
 mayo_pat_ids =  [0, 18, 21, 1, 9, 19, 2, 5, 16, 3, 4, 23, 6, 7, 8, 14, 17, 20]
 mayo_groups =   [[0, 18, 21], [1, 9, 19], [2, 5, 16], [3, 4, 23], [6, 7, 8], [14, 17, 20]]
@@ -49,9 +50,9 @@ class TrainArgs:
     channel_num: int = 1
     baseline: bool = False
 
-    data_root: str = '/data/brainnet/public_dataset'
-    ckpt_path: str = '/data/yzz/Brant-2/model_ckpt/'
-    data_save_dir: str = '/home/nas/share/TUEG/npy/mf'
+    data_root: str = ''
+    ckpt_path: str = config['Brant2_path']
+    data_save_dir: str = ''
 
 
 def sample_data(data, label, normal_sample_num, seizure_sample_num, artifact_sample_num):

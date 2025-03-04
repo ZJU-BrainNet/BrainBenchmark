@@ -7,7 +7,7 @@ from tqdm import tqdm
 from data_process.data_info import data_info_dict
 from utils.meta_info import dataset_class_dict, metrics_dict
 from utils.misc import update_logs, show_logs, make_dir_if_not_exist
-
+from utils.config import config
 
 def evaluate_epoch(args, x_list, y_list, model, clsf, loss_func, step):
     assert step == 'valid' or step == 'test'
@@ -72,7 +72,7 @@ def evaluate_epoch(args, x_list, y_list, model, clsf, loss_func, step):
             batch_cnt += 1
 
         if step == 'test' and data_info_dict[args.dataset]['label_level'] == 'channel_level':
-            save_logit_path = f'/data/brainnet/benchmark/test_logits/{args.model}_exp{args.exp_id}_cv{args.cv_id}_{args.data_id}/'
+            save_logit_path = f'{config["test_log_path"]}/{args.model}_exp{args.exp_id}_cv{args.cv_id}_{args.data_id}/'
             make_dir_if_not_exist(save_logit_path)
             # logit: (seq_num*ch_num, fake_ch_num=1, 2)
             # y: (seq_num*ch_num)
