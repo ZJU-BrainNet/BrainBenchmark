@@ -8,6 +8,7 @@ from einops import rearrange
 from data_process.data_info import data_info_dict
 from model.pre_cnn import ConvNet
 from model.LaBraM import utils
+from utils.config import config
 
 class LaBraM_Trainer:
     def __init__(self, args: Namespace):
@@ -29,7 +30,7 @@ class LaBraM_Trainer:
         args.layer_scale_init_value = 0.1
         args.qkv_bias = True
 
-        args.finetune = '/data/share/benchmark/pretrained_weights/LaBraM/labram-base.pth'
+        args.finetune = config["LaBraM_path"]
 
         args.model_key = 'model|module'
         args.model_filter_name = 'gzp'

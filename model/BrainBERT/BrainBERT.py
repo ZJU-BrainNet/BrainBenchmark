@@ -6,7 +6,7 @@ from argparse import Namespace
 from data_process.data_info import data_info_dict
 from model.BrainBERT.models.masked_tf_model import MaskedTFModel
 from model.pre_cnn import ConvNet
-
+from utils.config import config
 
 class BrainBERT_Trainer:
     def __init__(self, args: Namespace):
@@ -168,8 +168,7 @@ class BrainBERT(nn.Module):
             model.load_state_dict(init_state['model'])
             return model
 
-        # cfg = OmegaConf.create({"upstream_ckpt": '/data/yzz/Brant-2/baseline_ckpt/BrainBERT/stft_large_pretrained.pth'})
-        cfg = OmegaConf.create({"upstream_ckpt": '/data/share/benchmark/pretrained_weights/BrainBERT/stft_large_pretrained.pth'})
+        cfg = OmegaConf.create({"upstream_ckpt": config["BrainBERT_path"]})
         model = _build_model(cfg, args.gpu_id).to(args.gpu_id)
         return model
 

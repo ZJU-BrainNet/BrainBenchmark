@@ -7,6 +7,7 @@ from data_process.data_info import data_info_dict
 from model.Brant2.model.encoder import Brant2Encoder, Encoder
 from model.Brant2.model.utils import Embedding
 from model.pre_cnn import ConvNet
+from utils.config import config
 
 
 class Brant2_Trainer:
@@ -71,7 +72,7 @@ class Brant2(nn.Module):
         super(Brant2, self).__init__()
 
         self.encoder = self.load_pretrained_weights(args=args,
-                                                    state_dict_path='/data/yzz/Brant-2/model_ckpt/2560-8-2/brant2_20.pt',
+                                                    state_dict_path=config["Brant2_path"],
                                                     )
 
         self.emb = Embedding(args, do_mask=False)

@@ -9,6 +9,7 @@ from data_process.data_info import data_info_dict
 from model.BIOT.model.biot import BIOTClassifier
 from model.pre_cnn import ConvNet
 from model.LaBraM import utils
+from utils.config import config
 
 class BIOT_Trainer:
     def __init__(self, args: Namespace):
@@ -91,7 +92,7 @@ class BIOT(nn.Module):
 
     @staticmethod
     def load_pretrained_weights(args):
-        pretrained_model_path = '/data/share/benchmark/pretrained_weights/BIOT/EEG-six-datasets-18-channels.ckpt'
+        pretrained_model_path = config["BIOT_path"]
         biot_classifier = BIOTClassifier(
             emb_size=256,
             heads=8,

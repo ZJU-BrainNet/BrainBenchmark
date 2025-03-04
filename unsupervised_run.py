@@ -18,6 +18,7 @@ from pipeline.eval_epoch import evaluate_epoch
 from pipeline.train_epoch import train_epoch
 from utils.meta_info import model_dict, get_data_dict, trainer_dict
 from data_process.data_info import data_info_dict
+from utils.config import config
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='BrainBenchmark')
@@ -41,11 +42,11 @@ if __name__ == '__main__':
                              help='Whether to use early stopping technique during training.')
     group_train.add_argument('--patience', type=int, default=6,
                              help='The waiting epoch number for early stopping.')
-    group_train.add_argument('--load_ckpt_path', type=str, default='/data/brainnet/benchmark/ckpt/',    # None '/data/brainnet/benchmark/ckpt/'
+    group_train.add_argument('--load_ckpt_path', type=str, default=f'{config["ckpt_path"]}/',    # None f'{config["ckpt_path"]}/'
                              help='The path to load checkpoint (.pt file or the upper path).')
     group_train.add_argument('--load_best', action='store_false',
                              help='Whether to load the best state in the checkpoints (to continue unsupervised training or begin finetuning).')
-    group_train.add_argument('--save_ckpt_path', type=str, default='/data/brainnet/benchmark/ckpt/',
+    group_train.add_argument('--save_ckpt_path', type=str, default=f'{config["ckpt_path"]}/',
                              help='The path to save checkpoint')
     group_train.add_argument('--lr', type=float, default=3e-4,
                              help='The learning rate.')
@@ -63,7 +64,7 @@ if __name__ == '__main__':
                             help='The number of patches in a sequence.')
     group_data.add_argument('--patch_len', type=int, default=100,
                             help='The number of points in a patch.')
-    group_data.add_argument('--data_load_dir', type=str, default='/data/brainnet/benchmark/gene_data/',
+    group_data.add_argument('--data_load_dir', type=str, default=f'{config["gene_data_path"]}',
                             help='The path to load the generated data.')
     group_data.add_argument('--n_process_loader', type=int, default=5,
                             help='Number of processes to call to load the dataset.')
