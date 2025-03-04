@@ -49,8 +49,8 @@ To perform the self-supervised or unsupervised training, please run the `unsuper
 **Loading checkpoints.** If you need to load ckpt (continue training from the last breakpoint), please add the `load_ckpt_path` argument (`None` if train from scratch). The path to save model checkpoints can also be set with the `save_ckpt_path` argument. 
 
 ```
---load_ckpt_path f'{config["ckpt_path"]}/' 
---save_ckpt_path f'{config["ckpt_path"]}/' 
+--load_ckpt_path f'/data/brainnet/benchmark/ckpt' 
+--save_ckpt_path f'/data/brainnet/benchmark/ckpt' 
 ```
 
 
@@ -221,7 +221,7 @@ By the steps above, a new method can be added to the benchmark.
 | BIOT | Biot: Biosignal transformer for cross-data learning in the wild | [BIOT](https://github.com/ycq091044/BIOT)|
 | BrainBERT | Brainbert: Self-supervised representation learning for intracranial recordings | [Brainbert](https://github.com/czlwang/BrainBERT) |
 | Brant1 | Brant: Foundation model for intracranial neural signal | [Brant](https://zju-brainnet.github.io/Brant.github.io/)
-| Brant2 | BrainWave: A Brain Signal Foundation Model for Clinical Applications | - |
+| BrainWave | BrainWave: A Brain Signal Foundation Model for Clinical Applications | - |
 | GPT4TS | One Fits All:Power General Time Series Analysis by Pretrained LM | [GPT4TS](https://github.com/ekto42/GPT4TS) |
 | LaBraM | Large brain model for learning generic representations with tremendous EEG data in BCI | [LaBraM](https://github.com/935963004/LaBraM) |
 | SimMTM | SimMTM: A Simple Pre-Training Framework for Masked Time-Series Modeling | [SimMTM](https://github.com/thuml/SimMTM) |
@@ -245,13 +245,6 @@ The benchmark contains 9 public datasets and 4 private datasets.
 | Brant1 | RepOD | $71.01 \pm 23.54$ | $71.88 \pm 24.74$ | $98.28 \pm 2.41$ | $89.74 \pm 6.04$ | $77.31 \pm 24.15$ | $75.11 \pm 27.62$ |
 | Brant1 | CHBMIT | $92.03 \pm 1.27$ | $41.30 \pm 48.36$ | $13.80 \pm 16.28$ | $15.84 \pm 18.58$ | $36.72 \pm 22.70$ | $71.14 \pm 17.65$ |
 | Brant1 | Siena | $90.30 \pm 2.39$ | $44.85 \pm 36.08$ | $29.90 \pm 17.49$ | $31.19 \pm 17.96$ | $45.31 \pm 21.61$ | $86.17 \pm 5.51$ |
-| Brant2 | MAYO | 91.393 | 73.369 | 66.125 | 66.69 | 73.302 | 
-| Brant2 | UCSD |  |  |  |  |  | 
-| Brant2 | FNUSA |  |  |  |  |  | 
-| Brant2 | HUSM |  |  |  |  |  | 
-| Brant2 | RepOD |  |  |  |  |  | 
-| Brant2 | CHBMIT |  |  |  |  |  | 
-| Brant2 | Siena |  |  |  |  |  | 
 | BrainBERT | MAYO | $72.33 \pm 12.10$ | $37.60 \pm 22.43$ | $83.63 \pm 14.03$ | $61.32 \pm 12.13$ | $61.34 \pm 20.24$ | $88.52 \pm 6.70$ |
 | BrainBERT | UCSD | $52.75 \pm 6.64$ | $50.31 \pm 35.71$ | $61.52 \pm 52.76$ |$51.90 \pm 43.32$ | $82.17 \pm 7.45$ | $78.10 \pm 15.95$ |
 | BrainBERT | FNUSA | $50.03 \pm 13.24$ | $37.30 \pm 7.70$ | $88.32 \pm 12.41$ |$67.95 \pm 6.24$ | $68.91 \pm 8.13$ | $79.44 \pm 8.20$ |
@@ -260,26 +253,25 @@ The benchmark contains 9 public datasets and 4 private datasets.
 | BrainBERT | CHBMIT | $86.62 \pm 84.33$ | $39.72 \pm 33.37$ | $89.20 \pm 70.36$ | $71.41 \pm 57.11$ | $66.85 \pm 55.19$ | $92.82 \pm 82.70$ |
 | BrainBERT | Siena | $77.07 \pm 11.84$ | $26.45 \pm 11.45$ | $68.47 \pm 14.01$ | $49.69 \pm 10.55$ | $39.48 \pm 17.11$ | $80.89 \pm 9.18$ |
 | GPT4TS | MAYO | $72.24 \pm 15.86$ | $37.47 \pm 20.97$ | $82.13 \pm 15.36$ | $61.13 \pm 13.94$ | $55.27 \pm 24.63$ | $86.10 \pm 9.46$ |
-| GPT4TS | UCSD | $100.00 \pm 0.00$ | $100.00 \pm 0.00$ | $100.00 \pm 0.00$ | $100.00 \pm 0.00$ | $100.00 \pm 0.00$ | $100.00 \pm 0.00$ |
 | GPT4TS | FNUSA | $48.20 \pm 14.81$ | $36.87 \pm 7.85$ | $91.39 \pm 10.63$ | $69.15 \pm 5.14$ | $64.10 \pm 6.68$ | $78.74 \pm 7.09$ |
-| GPT4TS | HUSM | $70.42 \pm 2.76$ | $64.58 \pm 2.74$ | $99.78 \pm 0.49$ | $89.94 \pm 0.90$ | $90.73 \pm 2.63$ | $90.34 \pm 2.01$ | 
+| GPT4TS | HUSM | $70.42 \pm 2.76$ | $64.58 \pm 2.74$ | $99.78 \pm 0.49$ | $89.94 \pm 0.90$ | $90.73 \pm 2.63$ | $90.34 \pm 2.01$ |
 | GPT4TS | RepOD | $63.91 \pm 11.51$ | $61.43 \pm 8.73$ | $99.54 \pm 1.02$ | $88.23 \pm 3.26$ | $93.96 \pm 3.55$ | $92.35 \pm 4.27$ |
-| GPT4TS | CHBMIT | $85.63 \pm 10.79$ | $41.42 \pm 17.28$ | $65.78 \pm 22.33$ | $56.14 \pm 19.04$ | $55.79 \pm 22.16$ | $81.69 \pm 12.29$ | 
-| GPT4TS | Siena | $82.48 \pm 4.62$ | $31.55 \pm 7.88$ | $68.51 \pm 8.79$ | $55.01 \pm 7.84$ | $45.50 \pm 17.48$ | $84.13 \pm 4.30$ | 
-| SimMTM | MAYO | 87.332 | 66.871 | 24.03 | 26.157 | 55.788 | 
-| SimMTM | UCSD |  |  |  |  |  | 
-| SimMTM | FNUSA |  |  |  |  |  | 
-| SimMTM | HUSM |  |  |  |  |  | 
-| SimMTM | RepOD |  |  |  |  |  | 
-| SimMTM | CHBMIT |  |  |  |  |  | 
-| SimMTM | Siena |  |  |  |  |  | 
-| TF-C | MAYO | 88.635 | 54.12 | 48.162 | 48.276 | 48.975 | 
-| TF-C | UCSD |  |  |  |  |  | 
-| TF-C | FNUSA | 86.475 | 91.382 | 80.908 | 82.807 | 95.129 | 
-| TF-C | HUSM |  |  |  |  |  | 
-| TF-C | RepOD |  |  |  |  |  | 
-| TF-C | CHBMIT |  |  |  |  |  | 
-| TF-C | Siena |  |  |  |  |  | 
+| GPT4TS | CHBMIT | $85.63 \pm 10.79$ | $41.42 \pm 17.28$ | $65.78 \pm 22.33$ | $56.14 \pm 19.04$ | $55.79 \pm 22.16$ | $81.69 \pm 12.29$ |
+| GPT4TS | Siena | $82.48 \pm 4.62$ | $31.55 \pm 7.88$ | $68.51 \pm 8.79$ | $55.01 \pm 7.84$ | $45.50 \pm 17.48$ | $84.13 \pm 4.30$ |
+| SimMTM | MAYO | $88.44 \pm 4.96$ | $84.62 \pm 11.53$ | $34.07 \pm 7.69$ | $38.47 \pm 7.98$ | $74.71 \pm 13.67$ | $93.62 \pm 3.35$ |
+| SimMTM | UCSD | $91.03 \pm 10.40$ | $95.82 \pm 4.35$ | $85.01 \pm 20.73$ | $86.42 \pm 18.00$ | $96.55 \pm 4.57$ | $96.33 \pm 5.04$ |
+| SimMTM | FNUSA | $85.71 \pm 4.49$ | $80.76 \pm 16.95$ | $71.09 \pm 8.45$ | $71.83 \pm 4.48$ | $84.96 \pm 7.76$ | $91.78 \pm 4.01$ |
+| SimMTM | HUSM | $87.76 \pm 6.90$ | $90.60 \pm 5.36$ | $86.41 \pm 14.38$ | $86.79 \pm 11.92$ | $95.71 \pm 2.83$ | $95.53 \pm 2.93$ |
+| SimMTM | RepOD | $95.12 \pm 3.21$ | $95.78 \pm 6.91$ | $95.55 \pm 2.19$ | $95.49 \pm 1.30$ | $99.49 \pm 0.36$ | $99.29 \pm 0.59$ |
+| SimMTM | CHBMIT | $91.32 \pm 2.81$ | $61.34 \pm 23.37$ | $36.05 \pm 17.95$ | $37.69 \pm 16.63$ | $43.05 \pm 16.07$ | $72.99 \pm 12.46$ |
+| SimMTM | Siena | $90.81 \pm 4.85$ | $71.62 \pm 28.11$ | $40.83 \pm 16.77$ | $41.60 \pm 13.63$ | $55.06 \pm 14.37$ | $80.00 \pm 9.89$ |
+| TF-C | MAYO | $87.67 \pm 1.75$ | $57.82 \pm 20.36$ | $48.34 \pm 8.81$ | $48.83 \pm 6.92$ | $55.29 \pm 16.02$ | $85.14 \pm 4.18$ |
+| TF-C | UCSD | $99.72 \pm 0.46$ | $99.56 \pm 0.98$ | $99.85 \pm 0.33$ | $99.79 \pm 0.29$ | $100.00 \pm 0.00$ | $100.00 \pm 0.00$ |
+| TF-C | FNUSA | $79.61 \pm 5.43$ | $67.35 \pm 9.34$ | $62.30 \pm 13.96$ | $62.77 \pm 12.39$ | $72.46 \pm 9.82$ | $83.34 \pm 7.29$ |
+| TF-C | HUSM | $89.88 \pm 4.22$ | $91.12 \pm 2.96$ | $90.02 \pm 8.59$ | $90.11 \pm 6.99$ | $96.37 \pm 2.88$ | $96.23 \pm 2.45$ |
+| TF-C | RepOD | $49.62 \pm 7.64$ | $52.47 \pm 5.31$ | $69.08 \pm 36.87$ | $62.14 \pm 28.92$ | $57.03 \pm 9.28$ | $51.81 \pm 7.80$ |
+| TF-C | CHBMIT | $91.80 \pm 1.04$ | $65.95 \pm 16.21$ | $24.33 \pm 11.28$ | $27.44 \pm 12.40$ | $43.89 \pm 14.56$ | $78.72 \pm 11.67$ |
+| TF-C | Siena | $92.55 \pm 2.14$ | $60.32 \pm 17.54$ | $41.42 \pm 21.82$ | $43.80 \pm 21.60$ | $56.09 \pm 18.52$ | $86.71 \pm 4.72$ |
 | BIOT | MAYO | $82.29 \pm 5.32$ | $44.70 \pm 23.58$ | $55.75 \pm 14.68$ | $50.33 \pm 11.29$ | $47.39 \pm 18.72$ | $78.68 \pm 7.23$ |
 | BIOT | UCSD | $48.35 \pm 6.54$ | $49.12 \pm 4.95$ | $96.00 \pm 8.94$ | $80.59 \pm 7.51$ | $48.10 \pm 9.64$ | $42.82 \pm 10.51$ |
 | BIOT | FNUSA | $57.94 \pm 10.62$ | $39.79 \pm 6.62$ | $74.83 \pm 12.77$ | $63.09 \pm 9.26$ | $55.35 \pm 15.99$ | $70.38 \pm 15.87$ |
@@ -293,7 +285,6 @@ The benchmark contains 9 public datasets and 4 private datasets.
 | LaBraM | HUSM | $67.59 \pm 13.20$ | $84.30 \pm 6.87$ | $49.03 \pm 32.49$ | $51.08 \pm 31.75$ | $81.71 \pm 3.89$ | $84.02 \pm 4.54$ |
 | LaBraM | RepOD | $59.24 \pm 7.04$ | $67.26 \pm 11.69$ | $64.14 \pm 21.26$ | $62.56 \pm 12.55$ | $72.98 \pm 6.74$ | $71.24 \pm 3.25$ |
 | LaBraM | CHBMIT | $92.17 \pm 1.72$ | $56.87 \pm 41.01$ | $17.43 \pm 20.20$ | $19.85 \pm 22.77$ | $57.21 \pm 19.49$ | $85.78 \pm 10.10$ |
-| LaBraM | Siena | $90.82 \pm 0.41$ | $0.00 \pm 0.00$ | $0.00 \pm 0.00$ | $0.00 \pm 0.00$ | $33.56 \pm 15.89$ | $79.59 \pm 7.05$ |
 
 | Mode Name | Dataset | TopKAcc | Sens | Spec | MF1 | Kappa|
 | -------------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
@@ -303,3 +294,11 @@ The benchmark contains 9 public datasets and 4 private datasets.
 | BIOT | SleepEDFx | $89.22 \pm 0.65$ | $86.37 \pm 0.64$ | $86.37 \pm 0.64$ | $38.96 \pm 3.35$ | $30.68 \pm 3.70$ |
 | LaBraM | ISRUC | $72.75 \pm 1.90$ | $80.00 \pm 0.00$ | $80.00 \pm 0.00$ | $9.70 \pm 0.72$ | $0.00 \pm 0.00$ |
 | LaBraM | SleepEDFx | $95.03 \pm 1.08$ | $90.88 \pm 0.59$ | $90.88 \pm 0.59$ | $53.84 \pm 2.04$ | $54.15 \pm 2.98$ |
+| GPT4TS | ISRUC | $63.79 \pm 3.15$ | $80.00 \pm 0.00$ | $80.00 \pm 0.00$ | $4.73 \pm 0.32$ | $0.00 \pm 0.00$ |
+| GPT4TS | SleepEDFx | $92.96 \pm 1.81$ | $88.74 \pm 1.47$ | $88.74 \pm 1.47$ | $46.50 \pm 5.68$ | $40.25 \pm 8.34$ |
+| SimMTM | ISRUC | $82.89 \pm 14.49$ | $85.98 \pm 5.28$ | $85.98 \pm 5.28$ | $37.36 \pm 24.87$ | $29.68 \pm 26.03$ |
+| SimMTM | SleepEDFx | $97.19 \pm 0.72$ | $93.72 \pm 0.58$ | $93.72 \pm 0.58$ | $67.24 \pm 3.27$ | $67.12 \pm 3.08$ |
+| TF-C | ISRUC | $72.88 \pm 2.01$ | $80.00 \pm 0.00$ | $80.00 \pm 0.00$ | $9.67 \pm 0.73$ | $0.00 \pm 0.00$ |
+| TF-C | SleepEDFx | $95.64 \pm 0.82$ | $91.91 \pm 0.70$ | $91.91 \pm 0.70$ | $60.19 \pm 2.41$ | $58.28 \pm 3.22$ |
+| Brant1 | ISRUC | $72.00 \pm 4.06$ | $80.00 \pm 0.00$ | $80.00 \pm 0.00$ | $9.74 \pm 0.67$ | $0.00 \pm 0.00$ |
+| Brant1 | SleepEDFx | $96.70 \pm 1.31$ | $92.87 \pm 1.24$ | $92.87 \pm 1.24$ | $61.32 \pm 6.55$ | $63.30 \pm 6.04$ |
