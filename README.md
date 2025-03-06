@@ -15,9 +15,9 @@ torch==2.0.1
 tqdm==4.64.1
 ```
 
-## Data Generating 
+## Data Segmentation 
 
-For each dataset you want to run experiments on, the first thing to do is generating a specific set of data on your device. Just run the `data_gene.py`, passing in the specific argument value: `dataset`, `sample_seq_num`, `seq_len`, and  `patch_len`.
+For each dataset you want to run experiments on, the first thing to do is to split the data into specific set on your device. Just run the `data_gene.py`, passing in the specific argument value: `dataset`, `sample_seq_num`, `seq_len`, and  `patch_len`.
 
 These four arguments can determine one specific set of data. 
 
