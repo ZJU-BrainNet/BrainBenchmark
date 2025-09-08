@@ -1,9 +1,60 @@
 # BrainBenchmark
-The benchmark of self-supervised/unsupervised and pretrained models on brain signals. 
+BrainBenchmark is an open and unified benchmark designed for the EEG/iEEG-based neurological diagnostics community.
+
+Our goal is to **standardize evaluation protocols** for supervised, self-supervised, and pretrained models on brain signals.
+Currently, researchers often use the same public datasets with different data selection rules, filtering criteria, validation splits, and metrics, making it difficult to fairly compare different paradigms or determine their true strengths and weaknesses.
+
+BrainBenchmark provides:
+
+- Unified evaluation standards for reproducible and transparent comparisons
+
+- Standardized datasets with clear partitioning strategies
+
+- Easy-to-use interfaces for adding models and datasets
+  
+- Tools for consistent training, testing, and reporting
+
+We invite the community to use and contribute to this framework, so that different approaches can be evaluated on a **shared, fair basis** and collectively drive progress in EEG/iEEG research and its real-world healthcare applications.
+
+# 📊 Key Components
 
 
+### Supported Models
+| Mode Name | paper | code |
+| ---------- | ---------- | ---------- |
+| BIOT | Biot: Biosignal transformer for cross-data learning in the wild | [BIOT](https://github.com/ycq091044/BIOT)|
+| BrainBERT | Brainbert: Self-supervised representation learning for intracranial recordings | [Brainbert](https://github.com/czlwang/BrainBERT) |
+| Brant1 | Brant: Foundation model for intracranial neural signal | [Brant](https://zju-brainnet.github.io/Brant.github.io/)
+| BrainWave | BrainWave: A Brain Signal Foundation Model for Clinical Applications | - |
+| GPT4TS | One Fits All:Power General Time Series Analysis by Pretrained LM | [GPT4TS](https://github.com/ekto42/GPT4TS) |
+| LaBraM | Large brain model for learning generic representations with tremendous EEG data in BCI | [LaBraM](https://github.com/935963004/LaBraM) |
+| SimMTM | SimMTM: A Simple Pre-Training Framework for Masked Time-Series Modeling | [SimMTM](https://github.com/thuml/SimMTM) |
+| TF-C | Self-Supervised Contrastive Pre-Training for Time  Series via Time-Frequency Consistency | [TF-C](https://github.com/mims-harvard/TF-C-pretraining) |
 
-# How to start
+> Note: The models SimMTM and TF-C in the above model do not provide corresponding checkpoints, so we finetune them after pretraining on the matching dataset before testing.
+
+### Supported Dataset
+The benchmark contains 9 public datasets. 
+* public datasets: [CHB-MIT](https://physionet.org/content/chbmit/1.0.0/), [Mayo-Clinic](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [FNUSA](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [Siena](https://www.mdpi.com/2227-9717/8/7/846), [HUSM](https://figshare.com/articles/dataset/EEG_Data_New/4244171), [UCSD](https://openneuro.org/datasets/ds002778/versions/1.0.5), [RepOD](https://repod.icm.edu.pl/dataset.xhtml?persistentId=doi:10.18150/repod.0107441), [SleepEDFx](https://physionet.org/content/sleep-edfx/1.0.0/), [ISRUC](https://sleeptight.isr.uc.pt/)
+
+### Evaluation Metrics
+
+| Metric | What it Measures |
+|---------|-----------------|
+| **Accuracy (Acc)** | Overall proportion of correct predictions. |
+| **Precision (Prec)** | How many predicted positives are correct (false alarms low). |
+| **Recall (Rec)** | How many actual positives are correctly detected (sensitivity). |
+| **F2-score (F2)** | Balance of precision and recall, with extra weight on recall. |
+| **AUPRC** | Ranking quality under class imbalance (rare events like seizures). |
+| **AUROC** | Overall ranking ability across thresholds. |
+| **Top-K Accuracy (TopKAcc)** | True label appears in the top K predictions. |
+| **Sensitivity (Sens)** | Proportion of positives correctly detected. |
+| **Specificity (Spec)** | Proportion of negatives correctly detected. |
+| **Macro-F1 (MF1)** | F1-score averaged across classes, treats all classes equally. |
+| **Cohen’s Kappa (Kappa)** | Agreement between prediction and ground truth, adjusted for chance. |
+
+
+# 🚀 Getting Started
 
 Please install the following requirements:
 ```
@@ -15,24 +66,24 @@ torch==2.0.1
 tqdm==4.64.1
 ```
 
-## Data Segmentation 
+### Data Segmentation 
 
 For each dataset you want to run experiments on, the first thing to do is to split the data into specific set on your device. Just run the `data_gene.py`, passing in the specific argument value: `dataset`, `sample_seq_num`, `seq_len`, and  `patch_len`.
 
 These four arguments can determine one specific set of data. 
 
-## Training and Evaluation
+### Training and Evaluation
 
 This benchmark support the training and evaluating of two kinds of methods: 1) The models with a pretrained checkpoint; 2) An self-supervised or unsupervised without checkpoints. 
 
-### Pretrained Models
+#### Pretrained Models
 
 To load a checkpoint and train or evaluate from the checkpoint, please run the `pretrained_run.py`. For the `--run_mode` parameter, you can choose one from these strings:
 
 - `finetune`: load the checkpoint, and begin finetune from the checkpoint.
 - `test`: evaluate the model with this checkpoint.
 
-### Self-/unsupervised Methods
+#### Self-/unsupervised Methods
 
 To perform the self-supervised or unsupervised training, please run the `unsupervised_run.py`. For the `run_mode` argument, you can choose one from these strings:
 
@@ -55,9 +106,15 @@ To perform the self-supervised or unsupervised training, please run the `unsuper
 
 
 
-# How to extend
+## ⚙️ Extensions
 
-## To add a new dataset
+BrainBenchmark is designed to be easily extended with:
+
+- New datasets → add data and labels, update data_info_dict
+
+- New models → add to model/ with standardized trainer and dataset classes
+
+### To add a new dataset
 
 1. Split all the subjects in the new dataset into several groups (4-6 groups are recommended). Each group of data should be generated as a signle file named like `group_0_data.npy`, ..., `group_5_data.npy`. In each file, the shape of the numpy array is: `(seq_num, ch_num, seq_len, patch_len)` 
 
@@ -88,7 +145,7 @@ To perform the self-supervised or unsupervised training, please run the `unsuper
    - Add a line `'NAME': default_get_data,` to the dictionary `get_data_dict`. 
    - Add a line `'NAME': BinaryClassMetrics, ` (if `n_class==2`) or `'NAME': MultiClassMetrics, ` (if `n_class>=3`)  to the dictionary `metrics_dict`. 
 
-## To add a new method
+### To add a new method
 
 Assume that the method name is `NAME`, 
 
@@ -213,29 +270,31 @@ Assume that the method name is `NAME`,
 
 By the steps above, a new method can be added to the benchmark. 
 
+## 🤝 Community Vision
 
-# Benchmark Table
-## Model
-| Mode Name | paper | code |
-| ---------- | ---------- | ---------- |
-| BIOT | Biot: Biosignal transformer for cross-data learning in the wild | [BIOT](https://github.com/ycq091044/BIOT)|
-| BrainBERT | Brainbert: Self-supervised representation learning for intracranial recordings | [Brainbert](https://github.com/czlwang/BrainBERT) |
-| Brant1 | Brant: Foundation model for intracranial neural signal | [Brant](https://zju-brainnet.github.io/Brant.github.io/)
-| BrainWave | BrainWave: A Brain Signal Foundation Model for Clinical Applications | - |
-| GPT4TS | One Fits All:Power General Time Series Analysis by Pretrained LM | [GPT4TS](https://github.com/ekto42/GPT4TS) |
-| LaBraM | Large brain model for learning generic representations with tremendous EEG data in BCI | [LaBraM](https://github.com/935963004/LaBraM) |
-| SimMTM | SimMTM: A Simple Pre-Training Framework for Masked Time-Series Modeling | [SimMTM](https://github.com/thuml/SimMTM) |
-| TF-C | Self-Supervised Contrastive Pre-Training for Time  Series via Time-Frequency Consistency | [TF-C](https://github.com/mims-harvard/TF-C-pretraining) |
+Our long-term vision is for BrainBenchmark to become a community-driven platform.
 
-The models SimMTM and TF-C in the above model do not provide corresponding checkpoints, so we finetune them after pretraining on the matching dataset before testing.
+We hope researchers will:
 
-## Dataset
-The benchmark contains 9 public datasets and 4 private datasets. 
-* public datasets: [CHB-MIT](https://physionet.org/content/chbmit/1.0.0/), [Mayo-Clinic](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [FNUSA](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7297990/), [Siena](https://www.mdpi.com/2227-9717/8/7/846), [HUSM](https://figshare.com/articles/dataset/EEG_Data_New/4244171), [UCSD](https://openneuro.org/datasets/ds002778/versions/1.0.5), [RepOD](https://repod.icm.edu.pl/dataset.xhtml?persistentId=doi:10.18150/repod.0107441), [SleepEDFx](https://physionet.org/content/sleep-edfx/1.0.0/), [ISRUC](https://sleeptight.isr.uc.pt/)
-* private datasets: SeizureA, SeizureB, SeizureC, Clinical
+ - Contribute new datasets and models
 
-## Benchmark
-Currently, the benchmark is being reorganized. More models and datasets will be added in the future.
+- Follow unified evaluation protocols
+
+- Validate diverse paradigms fairly and transparently
+
+By working together, we can accelerate progress in EEG/iEEG analysis and bring these methods closer to real-world healthcare applications.
+
+> For full details, please see our paper and join us in building a shared benchmark for the future of brain signal research.
+
+
+
+
+## Results
+
+**Scope.** The tables below report illustrative, preliminary comparisons on a subset of representative models and datasets. As the benchmark is being reorganized, more models/datasets and full ablations will be added. For fair comparisons, all runs follow the same partitioning and metric definitions.
+
+
+
 | Mode Name | Dataset | Acc | Prec | Rec | F2 | AUPRC | AUROC |
 | -------------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
 | Brant1 | MAYO | $90.53 \pm 2.59$ | $64.90 \pm 18.24$ | $74.12 \pm 22.09$ | $69.87 \pm 18.56$ | $70.05 \pm 15.17$ | $93.21 \pm 3.11$ |
@@ -282,3 +341,12 @@ Currently, the benchmark is being reorganized. More models and datasets will be 
 | TF-C | SleepEDFx | $95.64 \pm 0.82$ | $91.91 \pm 0.70$ | $91.91 \pm 0.70$ | $60.19 \pm 2.41$ | $58.28 \pm 3.22$ |
 | Brant1 | ISRUC | $72.00 \pm 4.06$ | $80.00 \pm 0.00$ | $80.00 \pm 0.00$ | $9.74 \pm 0.67$ | $0.00 \pm 0.00$ |
 | Brant1 | SleepEDFx | $96.70 \pm 1.31$ | $92.87 \pm 1.24$ | $92.87 \pm 1.24$ | $61.32 \pm 6.55$ | $63.30 \pm 6.04$ |
+
+
+### Brief observations 
+
+- On seizure detection datasets (MAYO, FNUSA, CHBMIT, Siena), Brant1 and SimMTM generally achieve higher accuracy and AUROC, while BrainBERT and GPT4TS reach higher recall but lower precision, indicating a greater tendency to predict positives. BIOT shows inconsistent performance, with good results on some datasets but much weaker results on others.
+
+- For sleep staging datasets (ISRUC, SleepEDFx), SimMTM and TF-C deliver strong Top-K accuracy and macro-F1, with Brant1 and LaBraM also performing well, while BIOT and GPT4TS trail behind.
+
+- Overall, no single model dominates across all tasks, underscoring the importance of task-specific model design and the need for standardized benchmarks to enable fair, transparent comparisons.
